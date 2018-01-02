@@ -1,6 +1,8 @@
 
 # react-native-sinch-rtc
 
+## STILL UNDER DEVELOPMENT, DON'T USE!
+
 ## Getting started
 
 `$ npm install react-native-sinch-rtc --save`
@@ -42,4 +44,24 @@ import RNSinchRtc from 'react-native-sinch-rtc';
 // TODO: What to do with the module?
 RNSinchRtc;
 ```
-  
+
+react-native link
+
+Copy paste .aar to your android folder
+  repositories flatDir { dirs './libs' }
+
+
+  dependencies
+compile "com.facebook.react:react-native:+"  // From node_modules
+    compile 'com.google.firebase:firebase-messaging:11.8.0'
+
+    apply plugin: 'com.google.gms.google-services'
+
+    repositories 
+    maven { url 'https://maven.google.com'  }
+
+To project
+    classpath 'com.google.gms:google-services:3.1.1'
+
+
+    Add to main project google-services.json

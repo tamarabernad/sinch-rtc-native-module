@@ -1,6 +1,7 @@
 package com.reactlibrary;
 
 import com.sinch.android.rtc.ClientRegistration;
+import com.sinch.android.rtc.MissingGCMException;
 import com.sinch.android.rtc.NotificationResult;
 import com.sinch.android.rtc.Sinch;
 import com.sinch.android.rtc.SinchClient;
@@ -49,7 +50,14 @@ public class SinchService extends Service {
                 .environmentHost(ENVIRONMENT).build();
 
         mSinchClient.setSupportCalling(true);
-        mSinchClient.setSupportManagedPush(true);
+
+
+        //TODO: Is this needed?
+        try {
+            mSinchClient.setSupportManagedPush(true);
+        }catch (MissingGCMException e){
+
+        }
 
         mSinchClient.checkManifest();
 
