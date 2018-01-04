@@ -1,4 +1,4 @@
-package com.reactlibrary;
+package com.bluecall.sinch.notifications;
 
 import android.content.ComponentName;
 import android.content.Intent;
@@ -9,7 +9,7 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.sinch.android.rtc.NotificationResult;
 import com.sinch.android.rtc.SinchHelpers;
-import com.reactlibrary.SinchService;
+import com.bluecall.sinch.SinchService;
 
 import java.util.Map;
 

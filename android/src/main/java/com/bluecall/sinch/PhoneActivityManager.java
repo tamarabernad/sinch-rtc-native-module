@@ -1,4 +1,4 @@
-package com.reactlibrary;
+package com.bluecall.sinch;
 
 import android.content.ComponentName;
 import android.content.Context;

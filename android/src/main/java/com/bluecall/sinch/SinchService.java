@@ -1,4 +1,4 @@
-package com.reactlibrary;
+package com.bluecall.sinch;
 
 import com.sinch.android.rtc.ClientRegistration;
 import com.sinch.android.rtc.MissingGCMException;
