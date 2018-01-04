@@ -34,8 +34,8 @@ public class RNSinchRtcModule extends ReactContextBaseJavaModule implements Call
   }
 
   @ReactMethod
-  public void show(String message, int duration) {
-
+  public void init(String appKey, String appSecret, String environment) {
+    PhoneActivityManager.getInstance().init(appKey, appSecret, environment);
   }
 
   @ReactMethod

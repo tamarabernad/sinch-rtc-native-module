@@ -51,6 +51,10 @@ public class PhoneActivityManager implements ServiceConnection, CallDelegate {
         return mSinchServiceInterface;
     }
 
+    public void init(String appKey, String appSecret, String environment) {
+        getSinchServiceInterface().init(appKey, appSecret, environment);
+    }
+
     public void login(String username){
         if (!getSinchServiceInterface().isStarted()) {
             getSinchServiceInterface().startClient(username);

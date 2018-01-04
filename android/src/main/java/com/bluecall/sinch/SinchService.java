@@ -22,15 +22,14 @@ import android.util.Log;
 import java.util.Map;
 
 public class SinchService extends Service {
-
-    private static final String APP_KEY = "4a279d6c-4ebf-4dfc-9297-94c03e307f34";
-    private static final String APP_SECRET = "BCm/KEUAKU2PbpaukRzdGg==";
-    private static final String ENVIRONMENT = "sandbox.sinch.com";
-
-    public static final String CALL_ID = "CALL_ID";
     static final String TAG = SinchService.class.getSimpleName();
+    public static final String CALL_ID = "CALL_ID";
 
     public CallDelegate mDelegate;
+
+    private String mAppKey = "";
+    private String mAppSecret = "";
+    private String mEnvironment = "";
     private PersistedSettings mSettings;
     private SinchServiceInterface mSinchServiceInterface = new SinchServiceInterface();
     private SinchClient mSinchClient;
@@ -45,9 +44,9 @@ public class SinchService extends Service {
 
     private void createClient(String username) {
         mSinchClient = Sinch.getSinchClientBuilder().context(getApplicationContext()).userId(username)
-                .applicationKey(APP_KEY)
-                .applicationSecret(APP_SECRET)
-                .environmentHost(ENVIRONMENT).build();
+                .applicationKey(mAppKey)
+                .applicationSecret(mAppSecret)
+                .environmentHost(mEnvironment).build();
 
         mSinchClient.setSupportCalling(true);
 
@@ -112,6 +111,12 @@ public class SinchService extends Service {
 
         public boolean isStarted() {
             return SinchService.this.isStarted();
+        }
+
+        public void init(String appKey, String appSecret, String environment) {
+            mAppKey = appKey;
+            mAppSecret = appSecret;
+            mEnvironment = environment;
         }
 
         public void startClient(String userName) {
