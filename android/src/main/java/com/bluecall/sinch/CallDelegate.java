@@ -1,4 +1,4 @@
-package com.reactlibrary;
+package com.bluecall.sinch;
 
 /**
  * Created by tamarabernad on 2017-09-11.
