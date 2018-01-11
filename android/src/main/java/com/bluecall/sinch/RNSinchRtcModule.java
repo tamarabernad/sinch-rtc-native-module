@@ -58,4 +58,30 @@ public class RNSinchRtcModule extends ReactContextBaseJavaModule implements Call
     Log.d("SinchModule", "SinchModule onIncomingCall>> sending event: ");
     getReactApplicationContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("didReceiveCall",null);
   }
+
+  @Override
+  public void callEndedWithReason(String reason) {
+    Log.d("SinchModule", "SinchModule callEndedWithReason: ");
+    getReactApplicationContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("callEndedWithReason",reason);
+  }
+
+  @Override
+  public void callDidEstablish() {
+    Log.d("SinchModule", "SinchModule callDidEstablish: ");
+    getReactApplicationContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("callDidEstablish", null);
+  }
+
+  @Override
+  public void callDidProgress() {
+    Log.d("SinchModule", "SinchModule callDidProgress: ");
+    getReactApplicationContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("callDidProgress", null);
+  }
+
+  @Override
+  public void callDidChangeStatus(String status) {
+    Log.d("SinchModule", "SinchModule callDidChangeStatus: ");
+    getReactApplicationContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("callDidChangeStatus", status);
+  }
+
+
 }

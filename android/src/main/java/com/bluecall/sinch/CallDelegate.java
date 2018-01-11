@@ -6,4 +6,8 @@ package com.bluecall.sinch;
 
 public interface CallDelegate {
     void didReceiveCall(String callId);
+    void callEndedWithReason(String reason);
+    void callDidEstablish();
+    void callDidProgress();
+    void callDidChangeStatus(String status);
 }

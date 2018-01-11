@@ -35,6 +35,7 @@ public class SinchService extends Service {
     private SinchClient mSinchClient;
 
     private StartFailedListener mListener;
+    private SinchCallManager mCallManager;
 
     @Override
     public void onCreate() {
@@ -100,7 +101,9 @@ public class SinchService extends Service {
     public class SinchServiceInterface extends Binder {
 
         public Call callUser(String userId) {
-            return mSinchClient.getCallClient().callUser(userId);
+            Call call = mSinchClient.getCallClient().callUser(userId);
+            mCallManager = new SinchCallManager(call, mDelegate);
+            return call;
         }
         public void setDelegate(CallDelegate delegate){
             SinchService.this.mDelegate = delegate;
@@ -143,6 +146,9 @@ public class SinchService extends Service {
                 return null;
             }
             return mSinchClient.relayRemotePushNotificationPayload(payload);
+        }
+        public void answer() {
+            mCallManager.answer();
         }
     }
 
@@ -210,6 +216,7 @@ public class SinchService extends Service {
         public void onIncomingCall(CallClient callClient, Call call) {
             Log.d(TAG, "onIncomingCall: " + call.getCallId());
             mDelegate.didReceiveCall(call.getCallId());
+            mCallManager = new SinchCallManager(call, mDelegate);
             /*Intent intent = new Intent(SinchService.this, IncomingCallScreenActivity.class);
             intent.putExtra(CALL_ID, call.getCallId());
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

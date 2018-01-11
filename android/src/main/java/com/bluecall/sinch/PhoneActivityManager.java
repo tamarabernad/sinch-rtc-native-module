@@ -13,11 +13,10 @@ import com.sinch.android.rtc.calling.Call;
  * Created by tamarabernad on 2017-09-07.
  */
 
-public class PhoneActivityManager implements ServiceConnection, CallDelegate {
+public class PhoneActivityManager implements ServiceConnection {
 
     private SinchService.SinchServiceInterface mSinchServiceInterface;
     public CallDelegate mDelegate;
-    private String mCallId;
     private static PhoneActivityManager instance = null;
     protected PhoneActivityManager() {
         // Exists only to defeat instantiation.
@@ -36,7 +35,7 @@ public class PhoneActivityManager implements ServiceConnection, CallDelegate {
     public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
         if (SinchService.class.getName().equals(componentName.getClassName())) {
             mSinchServiceInterface = (SinchService.SinchServiceInterface) iBinder;
-            mSinchServiceInterface.setDelegate(this);
+            mSinchServiceInterface.setDelegate(mDelegate);
         }
     }
 
@@ -67,13 +66,6 @@ public class PhoneActivityManager implements ServiceConnection, CallDelegate {
     }
 
     public void answer() {
-        Call call = getSinchServiceInterface().getCall(mCallId);
-        call.answer();
-    }
-    @Override
-    public void didReceiveCall(String callId) {
-        this.mCallId = callId;
-        Log.d("PhoneActivity", "PhoneActivity onIncomingCall: ");
-        mDelegate.didReceiveCall(callId);
+        getSinchServiceInterface().answer();
     }
 }
