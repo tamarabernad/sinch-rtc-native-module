@@ -68,4 +68,8 @@ public class PhoneActivityManager implements ServiceConnection {
     public void answer() {
         getSinchServiceInterface().answer();
     }
+
+    public void sendMessage(String recipientUserId, String textBody) {
+        getSinchServiceInterface().sendMessage(recipientUserId, textBody);
+    }
 }

@@ -30,12 +30,15 @@ public class SinchService extends Service {
     private String mAppKey = "";
     private String mAppSecret = "";
     private String mEnvironment = "";
+    private Boolean mMessagesEnabled= false;
+
     private PersistedSettings mSettings;
     private SinchServiceInterface mSinchServiceInterface = new SinchServiceInterface();
     private SinchClient mSinchClient;
 
     private StartFailedListener mListener;
     private SinchCallManager mCallManager;
+    private SinchMessagesManager mMessagesManager;
 
     @Override
     public void onCreate() {
@@ -50,6 +53,12 @@ public class SinchService extends Service {
                 .environmentHost(mEnvironment).build();
 
         mSinchClient.setSupportCalling(true);
+
+        if(mMessagesEnabled){
+            mSinchClient.setSupportMessaging(mMessagesEnabled);
+            mMessagesManager = new SinchMessagesManager();
+            mSinchClient.getMessageClient().addMessageClientListener(mMessagesManager);
+        }
 
 
         //TODO: Is this needed?
@@ -149,6 +158,12 @@ public class SinchService extends Service {
         }
         public void answer() {
             mCallManager.answer();
+        }
+
+        public void sendMessage(String recipientUserId, String textBody) {
+            if (isStarted()) {
+                mMessagesManager.sendMessage(recipientUserId, textBody);
+            }
         }
     }
 

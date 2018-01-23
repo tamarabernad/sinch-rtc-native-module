@@ -53,6 +53,11 @@ public class RNSinchRtcModule extends ReactContextBaseJavaModule implements Call
     PhoneActivityManager.getInstance().answer();
   }
 
+  @ReactMethod
+  public void sendMessage(String recipientUserId, String textBody){
+    PhoneActivityManager.getInstance().sendMessage(recipientUserId, textBody);
+  }
+
   @Override
   public void didReceiveCall(String callId) {
     Log.d("SinchModule", "SinchModule onIncomingCall>> sending event: ");
