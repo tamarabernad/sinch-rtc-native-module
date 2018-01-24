@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
+import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -29,6 +30,7 @@ public class FcmListenerService extends FirebaseMessagingService {
                         if (sinchService != null) {
                             NotificationResult result = sinchService.relayRemotePushNotificationPayload(payload);
                             // handle result, e.g. show a notification or similar
+                          //  Log.d("Listener",result.getMessageResult());
                         }
                     }
                     payload = null;

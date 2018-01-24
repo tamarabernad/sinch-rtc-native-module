@@ -5,8 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
-import android.util.Log;
 
+import com.facebook.react.bridge.ReadableMap;
 import com.sinch.android.rtc.calling.Call;
 
 /**
@@ -16,7 +16,9 @@ import com.sinch.android.rtc.calling.Call;
 public class PhoneActivityManager implements ServiceConnection {
 
     private SinchService.SinchServiceInterface mSinchServiceInterface;
-    public CallDelegate mDelegate;
+    public CallDelegate mCallDelegate;
+    public MessageDelegate mMessageDelegate;
+
     private static PhoneActivityManager instance = null;
     protected PhoneActivityManager() {
         // Exists only to defeat instantiation.
@@ -35,7 +37,8 @@ public class PhoneActivityManager implements ServiceConnection {
     public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
         if (SinchService.class.getName().equals(componentName.getClassName())) {
             mSinchServiceInterface = (SinchService.SinchServiceInterface) iBinder;
-            mSinchServiceInterface.setDelegate(mDelegate);
+            mSinchServiceInterface.setCallDelegate(mCallDelegate);
+            mSinchServiceInterface.setMessageDelegate(mMessageDelegate);
         }
     }
 
@@ -69,7 +72,7 @@ public class PhoneActivityManager implements ServiceConnection {
         getSinchServiceInterface().answer();
     }
 
-    public void sendMessage(String recipientUserId, String textBody) {
-        getSinchServiceInterface().sendMessage(recipientUserId, textBody);
+    public void sendMessage(String recipientUserId, String textBody, ReadableMap headers) {
+        getSinchServiceInterface().sendMessage(recipientUserId, textBody,headers);
     }
 }

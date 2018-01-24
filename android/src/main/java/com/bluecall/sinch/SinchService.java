@@ -1,5 +1,8 @@
 package com.bluecall.sinch;
 
+import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.ReadableMapKeySetIterator;
+import com.facebook.react.bridge.ReadableType;
 import com.sinch.android.rtc.ClientRegistration;
 import com.sinch.android.rtc.MissingGCMException;
 import com.sinch.android.rtc.NotificationResult;
@@ -10,6 +13,7 @@ import com.sinch.android.rtc.SinchError;
 import com.sinch.android.rtc.calling.Call;
 import com.sinch.android.rtc.calling.CallClient;
 import com.sinch.android.rtc.calling.CallClientListener;
+import com.sinch.android.rtc.messaging.WritableMessage;
 
 import android.app.Service;
 import android.content.Context;
@@ -17,6 +21,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.IBinder;
+import android.os.Message;
 import android.util.Log;
 
 import java.util.Map;
@@ -25,12 +30,13 @@ public class SinchService extends Service {
     static final String TAG = SinchService.class.getSimpleName();
     public static final String CALL_ID = "CALL_ID";
 
-    public CallDelegate mDelegate;
+    public CallDelegate mCallDelegate;
+    public MessageDelegate mMessageDelegate;
 
     private String mAppKey = "";
     private String mAppSecret = "";
     private String mEnvironment = "";
-    private Boolean mMessagesEnabled= false;
+    private Boolean mMessagesEnabled= true;
 
     private PersistedSettings mSettings;
     private SinchServiceInterface mSinchServiceInterface = new SinchServiceInterface();
@@ -57,6 +63,7 @@ public class SinchService extends Service {
         if(mMessagesEnabled){
             mSinchClient.setSupportMessaging(mMessagesEnabled);
             mMessagesManager = new SinchMessagesManager();
+            mMessagesManager.mDelegate = mMessageDelegate;
             mSinchClient.getMessageClient().addMessageClientListener(mMessagesManager);
         }
 
@@ -65,7 +72,7 @@ public class SinchService extends Service {
         try {
             mSinchClient.setSupportManagedPush(true);
         }catch (MissingGCMException e){
-
+            Log.d("SinchService",e.getLocalizedMessage());
         }
 
         mSinchClient.checkManifest();
@@ -111,11 +118,14 @@ public class SinchService extends Service {
 
         public Call callUser(String userId) {
             Call call = mSinchClient.getCallClient().callUser(userId);
-            mCallManager = new SinchCallManager(call, mDelegate);
+            mCallManager = new SinchCallManager(call, mCallDelegate);
             return call;
         }
-        public void setDelegate(CallDelegate delegate){
-            SinchService.this.mDelegate = delegate;
+        public void setCallDelegate(CallDelegate delegate){
+            SinchService.this.mCallDelegate = delegate;
+        }
+        public void setMessageDelegate(MessageDelegate delegate){
+            SinchService.this.mMessageDelegate = delegate;
         }
         public String getUserName() {
             return mSinchClient.getLocalUserId();
@@ -154,15 +164,30 @@ public class SinchService extends Service {
                 Log.e(TAG, "Can't start a SinchClient as no username is available, unable to relay push.");
                 return null;
             }
-            return mSinchClient.relayRemotePushNotificationPayload(payload);
+            NotificationResult result = mSinchClient.relayRemotePushNotificationPayload(payload);
+            if(result.isMessage()){
+                mSinchClient.startListeningOnActiveConnection();
+            }
+            return result;
         }
         public void answer() {
             mCallManager.answer();
         }
 
-        public void sendMessage(String recipientUserId, String textBody) {
+        public void sendMessage(String recipientUserId, String textBody, ReadableMap headers) {
             if (isStarted()) {
-                mMessagesManager.sendMessage(recipientUserId, textBody);
+
+                WritableMessage message = new WritableMessage(recipientUserId, textBody);
+                ReadableMapKeySetIterator iterator = headers.keySetIterator();
+                while (iterator.hasNextKey()) {
+                    String key = iterator.nextKey();
+                    ReadableType type = headers.getType(key);
+                    if(type == ReadableType.String){
+                        message.addHeader(key, headers.getString(key));
+                    }
+                }
+
+                mSinchClient.getMessageClient().send(message);
             }
         }
     }
@@ -230,8 +255,8 @@ public class SinchService extends Service {
         @Override
         public void onIncomingCall(CallClient callClient, Call call) {
             Log.d(TAG, "onIncomingCall: " + call.getCallId());
-            mDelegate.didReceiveCall(call.getCallId());
-            mCallManager = new SinchCallManager(call, mDelegate);
+            mCallDelegate.didReceiveCall(call.getCallId());
+            mCallManager = new SinchCallManager(call, mCallDelegate);
             /*Intent intent = new Intent(SinchService.this, IncomingCallScreenActivity.class);
             intent.putExtra(CALL_ID, call.getCallId());
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
