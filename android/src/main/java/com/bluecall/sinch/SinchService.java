@@ -55,11 +55,9 @@ public class SinchService extends Service {
         //TODO: Is this needed?
         try {
             mSinchClient.setSupportManagedPush(true);
-        }catch (MissingGCMException e){
+        }catch (MissingGCMException e) {
 
         }
-
-        mSinchClient.checkManifest();
 
         mSinchClient.addSinchClientListener(new MySinchClientListener());
         mSinchClient.getCallClient().addCallClientListener(new SinchCallClientListener());
