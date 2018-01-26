@@ -3,12 +3,20 @@ package com.bluecall.sinch;
 
 import android.util.Log;
 
+import com.facebook.react.bridge.Dynamic;
+import com.facebook.react.bridge.JavaOnlyArray;
+import com.facebook.react.bridge.JavaOnlyMap;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.ReadableMapKeySetIterator;
+import com.facebook.react.bridge.ReadableType;
+import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 
+import java.lang.reflect.Array;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -99,21 +107,78 @@ public class RNSinchRtcModule extends ReactContextBaseJavaModule implements Call
   //Message Delegate
   @Override
   public void didReceiveMessage(String messageId, Map<String, String> headers, String senderId, String content, Date timeStamp) {
-    getReactApplicationContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("didReceiveMessage",null);
+
+    JavaOnlyMap headerMap = new JavaOnlyMap();
+    for (String key:headers.keySet()) {
+        headerMap.putString(key,headers.get(key));
+    }
+
+    JavaOnlyMap map = new JavaOnlyMap();
+    map.putString("messageId",messageId);
+    map.putMap("headers",headerMap);
+    map.putString("senderId",senderId);
+    map.putString("content",content);
+    map.putString("timeStamp",timeStamp.toString());
+
+    getReactApplicationContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("didReceiveMessage",map);
   }
 
   @Override
   public void didSendMessage(String messageId, Map<String, String> headers, List<String> recipients, String content, Date timeStamp) {
-    getReactApplicationContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("didSendMessage",null);
+    JavaOnlyMap headerMap = new JavaOnlyMap();
+    for (String key:headers.keySet()) {
+      headerMap.putString(key,headers.get(key));
+    }
+
+    JavaOnlyArray recipientsArray = new JavaOnlyArray();
+    for(String recipient:recipients){
+      recipientsArray.pushString(recipient);
+    }
+
+    JavaOnlyMap map = new JavaOnlyMap();
+    map.putString("messageId",messageId);
+    map.putMap("headers",headerMap);
+    map.putArray("recipients",recipientsArray);
+    map.putString("content",content);
+    map.putString("timeStamp",timeStamp.toString());
+
+    getReactApplicationContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("didSendMessage",map);
   }
 
   @Override
   public void didFailMessage(String messageId, Map<String, String> headers, List<String> recipients, String content, Date timeStamp, String errorMessage) {
-    getReactApplicationContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("didFailMessage",null);
+    JavaOnlyMap headerMap = new JavaOnlyMap();
+    for (String key:headers.keySet()) {
+      headerMap.putString(key,headers.get(key));
+    }
+
+    JavaOnlyArray recipientsArray = new JavaOnlyArray();
+    for(String recipient:recipients){
+      recipientsArray.pushString(recipient);
+    }
+
+    JavaOnlyMap map = new JavaOnlyMap();
+    map.putString("messageId",messageId);
+    map.putMap("headers",headerMap);
+    map.putArray("recipients",recipientsArray);
+    map.putString("content",content);
+    map.putString("timeStamp",timeStamp.toString());
+    map.putString("error",errorMessage);
+
+    getReactApplicationContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("didFailMessage",map);
   }
 
   @Override
   public void didDeliverMessage(String messageId, String recipientId, Date timeStamp) {
-    getReactApplicationContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("didDeliverMessage",null);
+
+    JavaOnlyMap map = new JavaOnlyMap();
+    map.putString("messageId",messageId);
+    map.putString("recipientId",recipientId);
+    map.putString("timeStamp",timeStamp.toString());
+
+
+    getReactApplicationContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("didDeliverMessage",map);
   }
+
+
 }

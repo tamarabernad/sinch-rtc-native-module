@@ -75,8 +75,6 @@ public class SinchService extends Service {
             Log.d("SinchService",e.getLocalizedMessage());
         }
 
-        mSinchClient.checkManifest();
-
         mSinchClient.addSinchClientListener(new MySinchClientListener());
         mSinchClient.getCallClient().addCallClientListener(new SinchCallClientListener());
     }
