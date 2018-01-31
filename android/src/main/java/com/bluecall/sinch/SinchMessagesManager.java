@@ -23,7 +23,7 @@ public class SinchMessagesManager implements MessageClientListener {
     @Override
     public void onIncomingMessage(MessageClient messageClient, Message message) {
         Log.d("SinchMessagesManager", "onIncomingMessage");
-        mDelegate.didReceiveMessage(message.getMessageId(),message.getHeaders(), message.getSenderId(), message.getTextBody(), message.getTimestamp());
+        mDelegate.didReceiveMessage(message.getMessageId(),message.getHeaders(), message.getSenderId(), message.getRecipientIds(), message.getTextBody(), message.getTimestamp());
     }
 
     @Override

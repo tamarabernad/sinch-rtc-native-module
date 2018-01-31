@@ -1,6 +1,7 @@
 package com.bluecall.sinch;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -8,5 +9,5 @@ import java.util.Map;
  */
 
 public interface SinchNotificationHandlerable {
-    void handleReceivedMessage(String messageId, Map<String, String> headers, String senderId, String content, Date timeStamp);
+    void handleReceivedMessage(String messageId, Map<String, String> headers, String senderId, List<String> recipients, String content, Date timeStamp);
 }

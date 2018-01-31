@@ -103,23 +103,29 @@ public class RNSinchRtcModule extends ReactContextBaseJavaModule implements Call
 
   //Message Delegate
   @Override
-  public void didReceiveMessage(String messageId, Map<String, String> headers, String senderId, String content, Date timeStamp) {
+  public void didReceiveMessage(String messageId, Map<String, String> headers, String senderId, List<String> recipients, String content, Date timeStamp) {
 
     WritableMap headerMap = Arguments.createMap();
     for (String key:headers.keySet()) {
         headerMap.putString(key,headers.get(key));
     }
 
+    WritableArray recipientsArray =  Arguments.createArray();
+    for(String recipient:recipients){
+      recipientsArray.pushString(recipient);
+    }
+
     WritableMap map = Arguments.createMap();
     map.putString("messageId",messageId);
     map.putMap("headers",headerMap);
     map.putString("senderId",senderId);
+    map.putArray("recipients",recipientsArray);
     map.putString("content",content);
     map.putString("timeStamp",timeStamp.toString());
 
     getReactApplicationContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("didReceiveMessage", map);
 
-    mNotificationHandler.handleReceivedMessage(messageId, headers, senderId, content, timeStamp);
+    mNotificationHandler.handleReceivedMessage(messageId, headers, senderId, recipients, content, timeStamp);
   }
 
   @Override
