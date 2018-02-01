@@ -1,8 +1,12 @@
 package com.bluecall.sinch;
 
+import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.ReadableMapKeySetIterator;
 import com.facebook.react.bridge.ReadableType;
+import com.facebook.react.bridge.WritableArray;
+import com.facebook.react.bridge.WritableMap;
 import com.sinch.android.rtc.ClientRegistration;
 import com.sinch.android.rtc.MissingGCMException;
 import com.sinch.android.rtc.NotificationResult;
@@ -173,8 +177,11 @@ public class SinchService extends Service {
         public void answer() {
             mCallManager.answer();
         }
+        public void hangup() {
+            mCallManager.hangup();
+        }
 
-        public void sendMessage(String recipientUserId, String textBody, ReadableMap headers) {
+        public void sendMessage(String recipientUserId, String textBody, ReadableMap headers, Callback callback) {
             if (isStarted()) {
 
                 WritableMessage message = new WritableMessage(recipientUserId, textBody);
@@ -188,6 +195,13 @@ public class SinchService extends Service {
                 }
 
                 mSinchClient.getMessageClient().send(message);
+
+                WritableArray recipientsArray =  Arguments.createArray();
+                for(String recipient:message.getRecipientIds()){
+                    recipientsArray.pushString(recipient);
+                }
+
+                callback.invoke(message.getMessageId(), recipientsArray, message.getTextBody());
             }
         }
     }

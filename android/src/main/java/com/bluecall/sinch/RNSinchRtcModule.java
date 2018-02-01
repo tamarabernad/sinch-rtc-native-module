@@ -4,6 +4,7 @@ package com.bluecall.sinch;
 import android.util.Log;
 
 import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
@@ -63,9 +64,14 @@ public class RNSinchRtcModule extends ReactContextBaseJavaModule implements Call
   }
 
   @ReactMethod
-  public void sendMessage(String recipientUserId, String textBody, ReadableMap headers){
+  public void hangup() {
+    PhoneActivityManager.getInstance().hangup();
+  }
 
-    PhoneActivityManager.getInstance().sendMessage(recipientUserId, textBody, headers);
+  @ReactMethod
+  public void sendMessage(String recipientUserId, String textBody, ReadableMap headers, Callback callback){
+
+    PhoneActivityManager.getInstance().sendMessage(recipientUserId, textBody, headers, callback);
   }
 
 

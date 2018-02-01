@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 
+import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReadableMap;
 import com.sinch.android.rtc.calling.Call;
 
@@ -72,7 +73,11 @@ public class PhoneActivityManager implements ServiceConnection {
         getSinchServiceInterface().answer();
     }
 
-    public void sendMessage(String recipientUserId, String textBody, ReadableMap headers) {
-        getSinchServiceInterface().sendMessage(recipientUserId, textBody,headers);
+    public void hangup() {
+        getSinchServiceInterface().hangup();
+    }
+
+    public void sendMessage(String recipientUserId, String textBody, ReadableMap headers, Callback callback) {
+        getSinchServiceInterface().sendMessage(recipientUserId, textBody,headers, callback);
     }
 }
