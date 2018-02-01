@@ -30,6 +30,11 @@ public class SinchCallManager {
     public void answer() {
         mSinchCall.answer();
     }
+    public void hangup() {
+        if (mSinchCall != null) {
+            mSinchCall.hangup();
+        }
+    }
     private void endCall() {
        // mAudioPlayer.stopProgressTone();
         if (mSinchCall != null) {

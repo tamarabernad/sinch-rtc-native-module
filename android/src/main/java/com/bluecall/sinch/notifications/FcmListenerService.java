@@ -1,9 +1,14 @@
 package com.bluecall.sinch.notifications;
 
+import android.app.Application;
+import android.app.NotificationManager;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.res.Resources;
 import android.os.IBinder;
+import android.support.v4.app.NotificationCompat;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -15,9 +20,21 @@ import java.util.Map;
 
 public class FcmListenerService extends FirebaseMessagingService {
 
+    public Class getMainActivityClass() {
+        String packageName = getApplicationContext().getPackageName();
+        Intent launchIntent = getApplicationContext().getPackageManager().getLaunchIntentForPackage(packageName);
+        String className = launchIntent.getComponent().getClassName();
+        try {
+            return Class.forName(className);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
     @Override
-    public void onMessageReceived(RemoteMessage remoteMessage){
+    public void onMessageReceived(final RemoteMessage remoteMessage){
         Map data = remoteMessage.getData();
+        final Application app = this.getApplication();
         if (SinchHelpers.isSinchPushPayload(data)) {
             new ServiceConnection() {
                 private Map payload;
@@ -28,7 +45,6 @@ public class FcmListenerService extends FirebaseMessagingService {
                         SinchService.SinchServiceInterface sinchService = (SinchService.SinchServiceInterface) service;
                         if (sinchService != null) {
                             NotificationResult result = sinchService.relayRemotePushNotificationPayload(payload);
-                            // handle result, e.g. show a notification or similar
                         }
                     }
                     payload = null;
