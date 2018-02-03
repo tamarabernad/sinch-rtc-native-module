@@ -6,7 +6,6 @@ import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.ReadableMapKeySetIterator;
 import com.facebook.react.bridge.ReadableType;
 import com.facebook.react.bridge.WritableArray;
-import com.facebook.react.bridge.WritableMap;
 import com.sinch.android.rtc.ClientRegistration;
 import com.sinch.android.rtc.MissingGCMException;
 import com.sinch.android.rtc.NotificationResult;
@@ -25,12 +24,15 @@ import com.sinch.android.rtc.messaging.MessageFailureInfo;
 import com.sinch.android.rtc.messaging.WritableMessage;
 
 import android.app.Service;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.content.pm.ServiceInfo;
 import android.os.Binder;
+import android.os.Bundle;
 import android.os.IBinder;
-import android.os.Message;
 import android.util.Log;
 
 import java.util.List;
@@ -43,9 +45,9 @@ public class SinchService extends Service {
     public CallDelegate mCallDelegate;
     public MessageDelegate mMessageDelegate;
 
-    private String mAppKey = "";
-    private String mAppSecret = "";
-    private String mEnvironment = "";
+    private String mAppKey = "4a279d6c-4ebf-4dfc-9297-94c03e307f34";
+    private String mAppSecret = "BCm/KEUAKU2PbpaukRzdGg==";
+    private String mEnvironment = "sandbox.sinch.com";
     private Boolean mMessagesEnabled= true;
 
     private PersistedSettings mSettings;
@@ -62,10 +64,27 @@ public class SinchService extends Service {
     }
 
     private void createClient(String username) {
+        ServiceInfo ai = null;
+        String appkey="";
+        String appSecret="";
+        String appEnvironment="";
+        try {
+            ComponentName myService = new ComponentName(SinchService.this, SinchService.this.getClass());
+            ai = getPackageManager().getServiceInfo(myService, PackageManager.GET_META_DATA);
+            Bundle bundle = ai.metaData;
+            appkey = bundle.getString("SINCH_APP_KEY");
+            appSecret = bundle.getString("SINCH_APP_SECRET");
+            appEnvironment= bundle.getString("SINCH_ENVIRONMENT");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
         mSinchClient = Sinch.getSinchClientBuilder().context(getApplicationContext()).userId(username)
-                .applicationKey(mAppKey)
-                .applicationSecret(mAppSecret)
-                .environmentHost(mEnvironment).build();
+                .applicationKey(appkey)
+                .applicationSecret(appSecret)
+                .environmentHost(appEnvironment).build();
 
         mSinchClient.setSupportCalling(true);
 
@@ -284,8 +303,24 @@ public class SinchService extends Service {
 
         @Override
         public void onIncomingMessage(MessageClient messageClient, com.sinch.android.rtc.messaging.Message message) {
-            Log.d("SinchMessagesManager", "onIncomingMessage");
-            mMessageDelegate.didReceiveMessage(SinchService.this, message.getMessageId(),message.getHeaders(), message.getSenderId(), message.getRecipientIds(), message.getTextBody(), message.getTimestamp());
+
+            if(mMessageDelegate != null) {
+                //App is in foreground and ReactNative context
+                mMessageDelegate.didReceiveMessage(SinchService.this, message.getMessageId(), message.getHeaders(), message.getSenderId(), message.getRecipientIds(), message.getTextBody(), message.getTimestamp());
+            }else{
+                //App is in background
+                ServiceInfo ai = null;
+                try {
+                    ComponentName myService = new ComponentName(SinchService.this, SinchService.this.getClass());
+                    ai = getPackageManager().getServiceInfo(myService, PackageManager.GET_META_DATA);
+                    Bundle bundle = ai.metaData;
+                    String handlerClassStr = bundle.getString("notification_handler");
+                    SinchNotificationHandlerable handler  = (SinchNotificationHandlerable)Class.forName(handlerClassStr).newInstance();
+                    handler.handleReceivedMessage(SinchService.this, message.getMessageId(), message.getHeaders(), message.getSenderId(), message.getRecipientIds(), message.getTextBody(), message.getTimestamp());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
 
         @Override
