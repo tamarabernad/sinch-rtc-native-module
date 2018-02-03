@@ -1,6 +1,7 @@
 
 package com.bluecall.sinch;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.facebook.react.bridge.Arguments;
@@ -109,7 +110,7 @@ public class RNSinchRtcModule extends ReactContextBaseJavaModule implements Call
 
   //Message Delegate
   @Override
-  public void didReceiveMessage(String messageId, Map<String, String> headers, String senderId, List<String> recipients, String content, Date timeStamp) {
+  public void didReceiveMessage(Context context, String messageId, Map<String, String> headers, String senderId, List<String> recipients, String content, Date timeStamp) {
 
     WritableMap headerMap = Arguments.createMap();
     for (String key:headers.keySet()) {
@@ -131,7 +132,7 @@ public class RNSinchRtcModule extends ReactContextBaseJavaModule implements Call
 
     getReactApplicationContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("didReceiveMessage", map);
 
-    mNotificationHandler.handleReceivedMessage(messageId, headers, senderId, recipients, content, timeStamp);
+    mNotificationHandler.handleReceivedMessage(context, messageId, headers, senderId, recipients, content, timeStamp);
   }
 
   @Override

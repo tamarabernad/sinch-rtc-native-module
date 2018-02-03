@@ -10,6 +10,7 @@ import com.facebook.react.bridge.WritableMap;
 import com.sinch.android.rtc.ClientRegistration;
 import com.sinch.android.rtc.MissingGCMException;
 import com.sinch.android.rtc.NotificationResult;
+import com.sinch.android.rtc.PushPair;
 import com.sinch.android.rtc.Sinch;
 import com.sinch.android.rtc.SinchClient;
 import com.sinch.android.rtc.SinchClientListener;
@@ -17,6 +18,10 @@ import com.sinch.android.rtc.SinchError;
 import com.sinch.android.rtc.calling.Call;
 import com.sinch.android.rtc.calling.CallClient;
 import com.sinch.android.rtc.calling.CallClientListener;
+import com.sinch.android.rtc.messaging.MessageClient;
+import com.sinch.android.rtc.messaging.MessageClientListener;
+import com.sinch.android.rtc.messaging.MessageDeliveryInfo;
+import com.sinch.android.rtc.messaging.MessageFailureInfo;
 import com.sinch.android.rtc.messaging.WritableMessage;
 
 import android.app.Service;
@@ -28,6 +33,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
 
+import java.util.List;
 import java.util.Map;
 
 public class SinchService extends Service {
@@ -48,7 +54,6 @@ public class SinchService extends Service {
 
     private StartFailedListener mListener;
     private SinchCallManager mCallManager;
-    private SinchMessagesManager mMessagesManager;
 
     @Override
     public void onCreate() {
@@ -66,9 +71,7 @@ public class SinchService extends Service {
 
         if(mMessagesEnabled){
             mSinchClient.setSupportMessaging(mMessagesEnabled);
-            mMessagesManager = new SinchMessagesManager();
-            mMessagesManager.mDelegate = mMessageDelegate;
-            mSinchClient.getMessageClient().addMessageClientListener(mMessagesManager);
+            mSinchClient.getMessageClient().addMessageClientListener(new SinchMessageClientListener());
         }
 
 
@@ -275,6 +278,37 @@ public class SinchService extends Service {
             intent.putExtra(CALL_ID, call.getCallId());
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             SinchService.this.startActivity(intent);*/
+        }
+    }
+    private class SinchMessageClientListener implements MessageClientListener {
+
+        @Override
+        public void onIncomingMessage(MessageClient messageClient, com.sinch.android.rtc.messaging.Message message) {
+            Log.d("SinchMessagesManager", "onIncomingMessage");
+            mMessageDelegate.didReceiveMessage(SinchService.this, message.getMessageId(),message.getHeaders(), message.getSenderId(), message.getRecipientIds(), message.getTextBody(), message.getTimestamp());
+        }
+
+        @Override
+        public void onMessageSent(MessageClient messageClient, com.sinch.android.rtc.messaging.Message message, String s) {
+            Log.d("SinchMessagesManager", "onMessageSent");
+            mMessageDelegate.didSendMessage(message.getMessageId(), message.getHeaders(), message.getRecipientIds(), message.getTextBody(), message.getTimestamp());
+        }
+
+        @Override
+        public void onMessageFailed(MessageClient messageClient, com.sinch.android.rtc.messaging.Message message, MessageFailureInfo messageFailureInfo) {
+            Log.d("SinchMessagesManager", "onMessageFailed");
+            mMessageDelegate.didFailMessage(message.getMessageId(), message.getHeaders(), message.getRecipientIds(), message.getTextBody(), message.getTimestamp(), messageFailureInfo.getSinchError().getMessage());
+        }
+
+        @Override
+        public void onMessageDelivered(MessageClient messageClient, MessageDeliveryInfo messageDeliveryInfo) {
+            Log.d("SinchMessagesManager", "onMessageDelivered");
+            mMessageDelegate.didDeliverMessage(messageDeliveryInfo.getMessageId(), messageDeliveryInfo.getRecipientId(), messageDeliveryInfo.getTimestamp());
+        }
+
+        @Override
+        public void onShouldSendPushData(MessageClient messageClient, com.sinch.android.rtc.messaging.Message message, List<PushPair> list) {
+            Log.d("SinchMessagesManager", "onShouldSendPushData");
         }
     }
 
