@@ -84,9 +84,12 @@ public class RNSinchRtcModule extends ReactContextBaseJavaModule implements Call
   }
 
   @Override
-  public void callEndedWithReason(String reason) {
+  public void callEndedWithReason(String reason, int duration) {
     Log.d("SinchModule", "SinchModule callEndedWithReason: ");
-    getReactApplicationContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("callEndedWithReason",reason);
+    WritableMap map = Arguments.createMap();
+    map.putString("reason",reason);
+    map.putInt("duration", duration);
+    getReactApplicationContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("callEndedWithReason", map);
   }
 
   @Override

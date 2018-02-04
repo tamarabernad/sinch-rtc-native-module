@@ -46,7 +46,8 @@ public class SinchCallManager {
         @Override
         public void onCallEnded(Call call) {
             CallEndCause cause = call.getDetails().getEndCause();
-            mDelegate.callEndedWithReason(cause.toString());
+
+            mDelegate.callEndedWithReason(cause.toString(), call.getDetails().getDuration());
             Log.d(TAG, "Call ended. Reason: " + cause.toString());
             //mAudioPlayer.stopProgressTone();
             //setVolumeControlStream(AudioManager.USE_DEFAULT_STREAM_TYPE);
