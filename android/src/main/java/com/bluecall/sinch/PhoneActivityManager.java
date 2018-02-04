@@ -64,9 +64,10 @@ public class PhoneActivityManager implements ServiceConnection {
         }
     }
 
-    public void call(String username){
+    public void call(String username, Callback callback){
         Call call = getSinchServiceInterface().callUser(username);
         String callId = call.getCallId();
+        callback.invoke(callId);
     }
 
     public void answer() {
