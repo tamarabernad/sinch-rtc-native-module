@@ -55,6 +55,9 @@ public class RNSinchRtcModule extends ReactContextBaseJavaModule implements Call
   }
 
   @ReactMethod
+  public void setDisplayName(String displayName){PhoneActivityManager.getInstance().setDisplayName(displayName);}
+
+  @ReactMethod
   public void call(String username, Callback callback) {
     PhoneActivityManager.getInstance().call(username, callback);
   }

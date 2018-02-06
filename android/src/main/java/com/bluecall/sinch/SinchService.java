@@ -105,6 +105,7 @@ public class SinchService extends Service {
 
         mSinchClient.addSinchClientListener(new MySinchClientListener());
         mSinchClient.getCallClient().addCallClientListener(new SinchCallClientListener());
+
     }
 
     @Override
@@ -202,7 +203,10 @@ public class SinchService extends Service {
         public void hangup() {
             mCallManager.hangup();
         }
-
+        public void setDisplayName(String displayName){
+            if(displayName == null)return;
+            mSinchClient.setPushNotificationDisplayName(displayName);
+        }
         public void sendMessage(String recipientUserId, String textBody, ReadableMap headers, Callback callback) {
             if (isStarted()) {
 

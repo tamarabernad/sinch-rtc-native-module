@@ -63,7 +63,7 @@ public class PhoneActivityManager implements ServiceConnection {
             getSinchServiceInterface().startClient(username);
         }
     }
-
+    public void setDisplayName(String displayName){getSinchServiceInterface().setDisplayName(displayName);}
     public void call(String username, Callback callback){
         Call call = getSinchServiceInterface().callUser(username);
         String callId = call.getCallId();
