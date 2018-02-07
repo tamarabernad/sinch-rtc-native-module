@@ -31,6 +31,7 @@ public class RNSinchRtcModule extends ReactContextBaseJavaModule implements Call
     PhoneActivityManager.getInstance().mCallDelegate = this;
     PhoneActivityManager.getInstance().mMessageDelegate= this;
     PhoneActivityManager.getInstance().setContext(reactContext);
+    Log.d("SinchModule", "created ");
   }
 
   @Override
@@ -138,7 +139,7 @@ public class RNSinchRtcModule extends ReactContextBaseJavaModule implements Call
 
     getReactApplicationContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("didReceiveMessage", map);
 
-    mNotificationHandler.handleReceivedMessage(context, messageId, headers, senderId, recipients, content, timeStamp);
+    //mNotificationHandler.handleReceivedMessage(context, messageId, headers, senderId, recipients, content, timeStamp);
   }
 
   @Override

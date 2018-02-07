@@ -311,19 +311,18 @@ public class SinchService extends Service {
             if(mMessageDelegate != null) {
                 //App is in foreground and ReactNative context
                 mMessageDelegate.didReceiveMessage(SinchService.this, message.getMessageId(), message.getHeaders(), message.getSenderId(), message.getRecipientIds(), message.getTextBody(), message.getTimestamp());
-            }else{
-                //App is in background
-                ServiceInfo ai = null;
-                try {
-                    ComponentName myService = new ComponentName(SinchService.this, SinchService.this.getClass());
-                    ai = getPackageManager().getServiceInfo(myService, PackageManager.GET_META_DATA);
-                    Bundle bundle = ai.metaData;
-                    String handlerClassStr = bundle.getString("notification_handler");
-                    SinchNotificationHandlerable handler  = (SinchNotificationHandlerable)Class.forName(handlerClassStr).newInstance();
-                    handler.handleReceivedMessage(SinchService.this, message.getMessageId(), message.getHeaders(), message.getSenderId(), message.getRecipientIds(), message.getTextBody(), message.getTimestamp());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+            }
+            //App is in background
+            ServiceInfo ai = null;
+            try {
+                ComponentName myService = new ComponentName(SinchService.this, SinchService.this.getClass());
+                ai = getPackageManager().getServiceInfo(myService, PackageManager.GET_META_DATA);
+                Bundle bundle = ai.metaData;
+                String handlerClassStr = bundle.getString("notification_handler");
+                SinchNotificationHandlerable handler  = (SinchNotificationHandlerable)Class.forName(handlerClassStr).newInstance();
+                handler.handleReceivedMessage(SinchService.this, message.getMessageId(), message.getHeaders(), message.getSenderId(), message.getRecipientIds(), message.getTextBody(), message.getTimestamp());
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
 
