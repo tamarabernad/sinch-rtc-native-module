@@ -230,6 +230,18 @@ public class SinchService extends Service {
                 callback.invoke(message.getMessageId(), recipientsArray, message.getTextBody());
             }
         }
+        public void terminateGracefully(){
+            if (mSinchClient != null) {
+                mSinchClient.stopListeningOnActiveConnection();
+                mSinchClient.terminateGracefully();
+            }
+        }
+        public void terminate(){
+            if (mSinchClient != null) {
+                mSinchClient.stopListeningOnActiveConnection();
+                mSinchClient.terminate();
+            }
+        }
     }
 
     public interface StartFailedListener {

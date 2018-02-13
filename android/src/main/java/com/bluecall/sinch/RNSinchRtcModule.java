@@ -79,6 +79,18 @@ public class RNSinchRtcModule extends ReactContextBaseJavaModule implements Call
     PhoneActivityManager.getInstance().sendMessage(recipientUserId, textBody, headers, callback);
   }
 
+  @ReactMethod
+  public void terminate(){
+
+    PhoneActivityManager.getInstance().terminate();
+  }
+
+  @ReactMethod
+  public void terminateGracefully(){
+
+    PhoneActivityManager.getInstance().terminateGracefully();
+  }
+
 
   //Call Delegate
   @Override
