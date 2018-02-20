@@ -22,12 +22,10 @@ import java.util.Map;
 public class RNSinchRtcModule extends ReactContextBaseJavaModule implements CallDelegate, MessageDelegate {
 
   private final ReactApplicationContext reactContext;
-  private final SinchNotificationHandlerable mNotificationHandler;
 
-  public RNSinchRtcModule(ReactApplicationContext reactContext, SinchNotificationHandlerable notificationHandler) {
+  public RNSinchRtcModule(ReactApplicationContext reactContext) {
     super(reactContext);
     this.reactContext = reactContext;
-    this.mNotificationHandler = notificationHandler;
     PhoneActivityManager.getInstance().mCallDelegate = this;
     PhoneActivityManager.getInstance().mMessageDelegate= this;
     PhoneActivityManager.getInstance().setContext(reactContext);

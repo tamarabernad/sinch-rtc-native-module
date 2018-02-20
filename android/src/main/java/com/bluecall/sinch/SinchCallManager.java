@@ -36,7 +36,6 @@ public class SinchCallManager {
         }
     }
     private void endCall() {
-       // mAudioPlayer.stopProgressTone();
         if (mSinchCall != null) {
             mSinchCall.hangup();
         }
@@ -49,8 +48,6 @@ public class SinchCallManager {
 
             mDelegate.callEndedWithReason(cause.toString(), call.getDetails().getDuration());
             Log.d(TAG, "Call ended. Reason: " + cause.toString());
-            //mAudioPlayer.stopProgressTone();
-            //setVolumeControlStream(AudioManager.USE_DEFAULT_STREAM_TYPE);
             String endMsg = "Call ended: " + call.getDetails().toString();
             endCall();
         }
@@ -59,15 +56,12 @@ public class SinchCallManager {
         public void onCallEstablished(Call call) {
             Log.d(TAG, "Call established");
             mDelegate.callDidEstablish();
-            //mAudioPlayer.stopProgressTone();
-            //setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
         }
 
         @Override
         public void onCallProgressing(Call call) {
             Log.d(TAG, "Call progressing");
             mDelegate.callDidProgress();
-           // mAudioPlayer.playProgressTone();
         }
 
         @Override

@@ -43,7 +43,8 @@ public class SinchService extends Service {
 
     public CallDelegate mCallDelegate;
     public MessageDelegate mMessageDelegate;
-    private MessagesHandlerable mMessagesHandler;
+
+    private MessagesHandlerable _mMessagesHandler;
 
     private Boolean mMessagesEnabled= true;
 
@@ -141,6 +142,23 @@ public class SinchService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return mSinchServiceInterface;
+    }
+
+    private MessagesHandlerable getmMessageHandler(){
+        if(_mMessagesHandler == null){
+
+            ServiceInfo ai = null;
+            try {
+                ComponentName myService = new ComponentName(SinchService.this, SinchService.this.getClass());
+                ai = getPackageManager().getServiceInfo(myService, PackageManager.GET_META_DATA);
+                Bundle bundle = ai.metaData;
+                String handlerClassStr = bundle.getString("messages_handler");
+                _mMessagesHandler  = (MessagesHandlerable)Class.forName(handlerClassStr).newInstance();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return _mMessagesHandler;
     }
 
     public class SinchServiceInterface extends Binder {
@@ -320,41 +338,30 @@ public class SinchService extends Service {
                 //App is in foreground and ReactNative context
                 mMessageDelegate.didReceiveMessage(SinchService.this, message.getMessageId(), message.getHeaders(), message.getSenderId(), message.getRecipientIds(), message.getTextBody(), message.getTimestamp());
             }
-            //App is in background
-            ServiceInfo ai = null;
-            try {
-                ComponentName myService = new ComponentName(SinchService.this, SinchService.this.getClass());
-                ai = getPackageManager().getServiceInfo(myService, PackageManager.GET_META_DATA);
-                Bundle bundle = ai.metaData;
-                String handlerClassStr = bundle.getString("notification_handler");
-                SinchNotificationHandlerable handler  = (SinchNotificationHandlerable)Class.forName(handlerClassStr).newInstance();
-                handler.handleReceivedMessage(SinchService.this, message.getMessageId(), message.getHeaders(), message.getSenderId(), message.getRecipientIds(), message.getTextBody(), message.getTimestamp());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            getmMessageHandler().onIncomingMessage(SinchService.this, message.getMessageId(), message.getHeaders(), message.getSenderId(), message.getRecipientIds(), message.getTextBody(), message.getTimestamp());
         }
 
         @Override
         public void onMessageSent(MessageClient messageClient, com.sinch.android.rtc.messaging.Message message, String s) {
-            Log.d("SinchMessagesManager", "onMessageSent");
+            Log.d(TAG, "onMessageSent");
             mMessageDelegate.didSendMessage(message.getMessageId(), message.getHeaders(), message.getRecipientIds(), message.getTextBody(), message.getTimestamp());
         }
 
         @Override
         public void onMessageFailed(MessageClient messageClient, com.sinch.android.rtc.messaging.Message message, MessageFailureInfo messageFailureInfo) {
-            Log.d("SinchMessagesManager", "onMessageFailed");
+            Log.d(TAG, "onMessageFailed");
             mMessageDelegate.didFailMessage(message.getMessageId(), message.getHeaders(), message.getRecipientIds(), message.getTextBody(), message.getTimestamp(), messageFailureInfo.getSinchError().getMessage());
         }
 
         @Override
         public void onMessageDelivered(MessageClient messageClient, MessageDeliveryInfo messageDeliveryInfo) {
-            Log.d("SinchMessagesManager", "onMessageDelivered");
+            Log.d(TAG, "onMessageDelivered");
             mMessageDelegate.didDeliverMessage(messageDeliveryInfo.getMessageId(), messageDeliveryInfo.getRecipientId(), messageDeliveryInfo.getTimestamp());
         }
 
         @Override
         public void onShouldSendPushData(MessageClient messageClient, com.sinch.android.rtc.messaging.Message message, List<PushPair> list) {
-            Log.d("SinchMessagesManager", "onShouldSendPushData");
+            Log.d(TAG, "onShouldSendPushData");
         }
     }
 
