@@ -40,14 +40,10 @@ import java.util.Map;
 
 public class SinchService extends Service {
     static final String TAG = SinchService.class.getSimpleName();
-    public static final String CALL_ID = "CALL_ID";
 
     public CallDelegate mCallDelegate;
     public MessageDelegate mMessageDelegate;
 
-    private String mAppKey = "4a279d6c-4ebf-4dfc-9297-94c03e307f34";
-    private String mAppSecret = "BCm/KEUAKU2PbpaukRzdGg==";
-    private String mEnvironment = "sandbox.sinch.com";
     private Boolean mMessagesEnabled= true;
 
     private PersistedSettings mSettings;
@@ -100,8 +96,6 @@ public class SinchService extends Service {
         }catch (MissingGCMException e){
             Log.d("SinchService",e.getLocalizedMessage());
         }
-
-        //mSinchClient.checkManifest();
 
         mSinchClient.addSinchClientListener(new MySinchClientListener());
         mSinchClient.getCallClient().addCallClientListener(new SinchCallClientListener());
@@ -160,12 +154,6 @@ public class SinchService extends Service {
 
         public boolean isStarted() {
             return SinchService.this.isStarted();
-        }
-
-        public void init(String appKey, String appSecret, String environment) {
-            mAppKey = appKey;
-            mAppSecret = appSecret;
-            mEnvironment = environment;
         }
 
         public void startClient(String userName) {
