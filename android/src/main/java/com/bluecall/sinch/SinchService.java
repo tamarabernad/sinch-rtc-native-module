@@ -43,6 +43,7 @@ public class SinchService extends Service {
 
     public CallDelegate mCallDelegate;
     public MessageDelegate mMessageDelegate;
+    private MessagesHandlerable mMessagesHandler;
 
     private Boolean mMessagesEnabled= true;
 
@@ -116,7 +117,14 @@ public class SinchService extends Service {
             createClient(username);
         }
         Log.d(TAG, "Starting SinchClient");
-        mSinchClient.start();
+
+        try {
+            mSinchClient.start();
+        } catch (Exception ex) {
+            Log.d(TAG, "Error: " + ex.getMessage());
+            createClient(username);
+            mSinchClient.start();
+        }
     }
 
     private void stop() {
