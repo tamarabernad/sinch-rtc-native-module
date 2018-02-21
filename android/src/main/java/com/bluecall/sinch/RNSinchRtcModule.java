@@ -143,8 +143,6 @@ public class RNSinchRtcModule extends ReactContextBaseJavaModule implements Call
     map.putString("timeStamp",timeStamp.toString());
 
     getReactApplicationContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("didReceiveMessage", map);
-
-    //mNotificationHandler.handleReceivedMessage(context, messageId, headers, senderId, recipients, content, timeStamp);
   }
 
   @Override

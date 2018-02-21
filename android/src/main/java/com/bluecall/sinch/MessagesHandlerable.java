@@ -14,4 +14,5 @@ import java.util.Map;
 
 public interface MessagesHandlerable {
     void onIncomingMessage(Context context, String messageId, Map<String, String> headers, String senderId, List<String> recipients, String content, Date timeStamp);
+    void onSendingMessage(Context context, String messageId, Map<String, String> headers, String senderId, List<String> recipients, String content);
 }

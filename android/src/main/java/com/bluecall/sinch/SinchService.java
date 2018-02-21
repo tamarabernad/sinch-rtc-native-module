@@ -241,7 +241,9 @@ public class SinchService extends Service {
                     recipientsArray.pushString(recipient);
                 }
 
+                getmMessageHandler().onSendingMessage(SinchService.this, message.getMessageId(), message.getHeaders(), this.getUserName(), message.getRecipientIds(), message.getTextBody());
                 callback.invoke(message.getMessageId(), recipientsArray, message.getTextBody());
+
             }
         }
         public void terminateGracefully(){
@@ -333,12 +335,12 @@ public class SinchService extends Service {
 
         @Override
         public void onIncomingMessage(MessageClient messageClient, com.sinch.android.rtc.messaging.Message message) {
+            getmMessageHandler().onIncomingMessage(SinchService.this, message.getMessageId(), message.getHeaders(), message.getSenderId(), message.getRecipientIds(), message.getTextBody(), message.getTimestamp());
 
             if(mMessageDelegate != null) {
                 //App is in foreground and ReactNative context
                 mMessageDelegate.didReceiveMessage(SinchService.this, message.getMessageId(), message.getHeaders(), message.getSenderId(), message.getRecipientIds(), message.getTextBody(), message.getTimestamp());
             }
-            getmMessageHandler().onIncomingMessage(SinchService.this, message.getMessageId(), message.getHeaders(), message.getSenderId(), message.getRecipientIds(), message.getTextBody(), message.getTimestamp());
         }
 
         @Override
