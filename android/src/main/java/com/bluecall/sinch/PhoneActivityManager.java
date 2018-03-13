@@ -25,6 +25,10 @@ public class PhoneActivityManager implements ServiceConnection {
         // Exists only to defeat instantiation.
     }
     public void setContext(Context context){
+
+        if(mSinchServiceInterface != null){
+            context.unbindService(this);
+        }
         context.bindService(new Intent(context, SinchService.class), this,
                 Context.BIND_AUTO_CREATE);
     }

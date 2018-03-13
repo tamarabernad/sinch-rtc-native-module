@@ -28,7 +28,7 @@ public class RNSinchRtcModule extends ReactContextBaseJavaModule implements Call
     this.reactContext = reactContext;
     PhoneActivityManager.getInstance().mCallDelegate = this;
     PhoneActivityManager.getInstance().mMessageDelegate= this;
-    PhoneActivityManager.getInstance().setContext(reactContext);
+    PhoneActivityManager.getInstance().setContext(reactContext.getApplicationContext());
     Log.d("SinchModule", "created ");
   }
 
