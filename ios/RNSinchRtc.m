@@ -2,13 +2,32 @@
 #import "RNSinchRtc.h"
 #import "RNSinchRtc-Swift.h"
 
+@interface RNSinchRtc()<CallDelegate>
+
+@end
 @implementation RNSinchRtc
 
+- (instancetype)init{
+    if(self = [super init]){
+        PhoneActivityManager.instance.callManager.callDelegate = self;
+    }
+    return self;
+}
 - (dispatch_queue_t)methodQueue
 {
     return dispatch_get_main_queue();
 }
 RCT_EXPORT_MODULE()
+
+- (NSArray<NSString *> *)supportedEvents
+{
+    
+    return @[RNEvent.CallDidChangeStatus,
+             RNEvent.CallEndedWithReason,
+             RNEvent.CallDidEstablish,
+             RNEvent.CallDidProgress,];
+}
+
 
 // User
 RCT_EXPORT_METHOD(login:(NSString *)username)
@@ -68,5 +87,25 @@ RCT_EXPORT_METHOD(sendMessage:(NSString *)receiverUserId
     }
 }
 
+#pragma mark - CallDelegate
+- (void)callDidChangeStatusWithStatus:(NSString * _Nonnull)status {
+    NSLog(@"callDidChangeStatusWithStatus");
+    [self sendEventWithName:RNEvent.CallDidChangeStatus body:status];
+}
+
+- (void)callDidEndWithReason:(enum CallEndReason)reason {
+    NSLog(@"callDidEndWithReason");
+    [self sendEventWithName:RNEvent.CallEndedWithReason body:@{@"duration":@1, @"reason":@""}];
+}
+
+- (void)callDidEstablish {
+    NSLog(@"callDidEstablish");
+    [self sendEventWithName:RNEvent.CallDidEstablish body:nil];
+}
+
+- (void)callDidProgress {
+    NSLog(@"callDidProgress");
+    [self sendEventWithName:RNEvent.CallDidProgress body:nil];
+}
+
 @end
-  

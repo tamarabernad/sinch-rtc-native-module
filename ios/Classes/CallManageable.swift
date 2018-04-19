@@ -66,7 +66,7 @@ class CallResultObjC:NSObject{
     var callDirection:CallDirection{get}
     var establishedTime:Date?{get}
     var callDuration:NSNumber?{get}
-    var remoteUserId:String?{get}
+//    var remoteUserId:String?{get}
     var callId:String?{get}
 //    var level:String?{get}
     var call:Any?{get}

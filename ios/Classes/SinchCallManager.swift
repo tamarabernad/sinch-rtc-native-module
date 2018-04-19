@@ -38,9 +38,9 @@ class SinchCallManager:NSObject{
         
         return NSNumber(value: end.timeIntervalSince(begin))
     }
-    var remoteUserId: String?{
-        return self.sinchCall?.remoteUserId
-    }
+//    var remoteUserId: String?{
+//        return self.sinchCall?.remoteUserId
+//    }
     var callId: String?{
         return self.sinchCall?.callId
     }
@@ -93,7 +93,7 @@ class SinchCallManager:NSObject{
         return _params.isFirstFreeCall;
     }
     
-    init(_ messagingEnabled:Bool = false) {
+    init(_ messagingEnabled:Bool = true) {
         push = Sinch.managedPush(with: SINAPSEnvironmentAutomatic)
         isMessagingEnabled = messagingEnabled;
         super.init()
@@ -111,11 +111,7 @@ class SinchCallManager:NSObject{
     func initSinchClient(with userId:String){
         if(client == nil){
             UserDefaults.standard.set(userId, forKey: "userId");
-//            client = Sinch.client(withApplicationKey: BCEnvironment.sinchAppKey(), applicationSecret: BCEnvironment.sinchAppSecret(), environmentHost: BCEnvironment.sinchEnvHost(), userId: userId)
-//
-//            if let user = BCDataProvider.loggedInUser(){
-//                self.push.setDisplayName(user.displayName())
-//            }
+            client = Sinch.client(withApplicationKey: "4a279d6c-4ebf-4dfc-9297-94c03e307f34", applicationSecret: "BCm/KEUAKU2PbpaukRzdGg==", environmentHost: "sandbox.sinch.com", userId: userId)
           
             client?.delegate = self
             client?.call().delegate = self
@@ -234,6 +230,10 @@ extension SinchCallManager:SINManagedPushDelegate{
     }
 }
 extension SinchCallManager:CallManageable{
+//    var remoteUserId: String? {
+//        <#code#>
+//    }
+    
     func login(_ userId:String){
         self.userId = userId;
         self.initSinchClient(with: userId)

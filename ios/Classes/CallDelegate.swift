@@ -19,7 +19,6 @@ import Foundation
 @objc protocol CallDelegate{
     func callDidEnd(reason:CallEndReason)
     func callDidEstablish()
-    func callWasStored()
     func callDidProgress()
     func callDidChangeStatus(status:String)
 }
