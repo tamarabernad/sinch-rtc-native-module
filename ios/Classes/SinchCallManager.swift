@@ -354,61 +354,45 @@ extension SinchCallManager:SINCallDelegate{
         audioController.stopCallSound()
         
         inCall = false;
-        let status:CallStatus = .finished;
-        var result:CallResult;
-        
-        var reason:CallEndReason;
+        var result:String = "";
         if let error = call.details.error as NSError?{
 
             self.addLogNote(note: error.localizedDescription)
-            
-            if (error.code == 4000){
-                reason = .errorNoUser;
-                result = .errorNoUser;
-            }else{
-                reason = .errorGeneral;
-                result = .error   
-            }
+            result = ""
         }else{
             let cause = call.details.endCause;
             switch cause {
             case .canceled:
-                reason = .canceled
-                result = .canceled
+                result = "CANCELED"
                 break;
             case .noAnswer:
-                reason = .noAnswer
-                result = .noAnswer
+                result = "NO_ANSWER"
                 break;
             case .denied:
-                reason = .declined
-                result = .declined
+                result = "DENIED"
                 break;
             case .timeout:
-                reason = .timeout
-                result = .timedout
+                result = "TIMEOUT"
                 break;
             case .hungUp:
-                reason = .hangup
-                result = .hangup
+                result = "HUNG_UP"
+                break;
+            case .otherDeviceAnswered:
+                result = "OTHER_DEVICE_ANSWERED"
+                break;
+            case .none:
+                result = "NONE"
                 break;
             default:
-                reason = .errorGeneral
-                result = .error
+                result = ""
             }
         }
-//        if let _callId = self.call?.uid, let _sinchCall = self.sinchCall, _sinchCall.direction == .outgoing
-//        {
-//            self.addLogNote(note: result.rawValue)
-//            self.addLogNote(note: status.rawValue)
-////
-////            self.call?.result = result.rawValue;
-////            self.call?.status = status.rawValue;
-////            self.call?.note = self.logNotes;
-////            self.call?.persist()
-//
-//        }
-        self.callDelegate?.callDidEnd(reason: reason)
+        
+        var duration = 0.0;
+        if let begin = sinchCall?.details.establishedTime,let end = sinchCall?.details.endedTime {
+            duration = end.timeIntervalSince(begin);
+        }
+        self.callDelegate?.callDidEnd(reason: result, duration: duration)
         self.callKitProvider?.reportCallEnded(call)
         self.callStatus = .finished
         self.remoteNotificationIncomingDisplayName = nil;

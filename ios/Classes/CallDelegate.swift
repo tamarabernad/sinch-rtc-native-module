@@ -17,7 +17,7 @@ import Foundation
     case hangup;
 }
 @objc protocol CallDelegate{
-    func callDidEnd(reason:CallEndReason)
+    func callDidEnd(reason:String, duration:Double)
     func callDidEstablish()
     func callDidProgress()
     func callDidChangeStatus(status:String)

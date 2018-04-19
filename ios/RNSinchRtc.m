@@ -93,9 +93,8 @@ RCT_EXPORT_METHOD(sendMessage:(NSString *)receiverUserId
     [self sendEventWithName:RNEvent.CallDidChangeStatus body:status];
 }
 
-- (void)callDidEndWithReason:(enum CallEndReason)reason {
-    NSLog(@"callDidEndWithReason");
-    [self sendEventWithName:RNEvent.CallEndedWithReason body:@{@"duration":@1, @"reason":@""}];
+- (void)callDidEndWithReason:(NSString *)reason duration:(double)duration{
+    [self sendEventWithName:RNEvent.CallEndedWithReason body:@{@"duration":@(duration), @"reason":@""}];
 }
 
 - (void)callDidEstablish {
