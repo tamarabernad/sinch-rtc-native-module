@@ -49,14 +49,17 @@ class CallResultObjC:NSObject{
     public static let errorNoUser = CallResult.errorNoUser.rawValue
 }
 @objc protocol CallManageable{
+    
+    func login(_ userId:String)
+    func logout()
+    func setDisplayName(_ name:String)
     //returns callId
     func call(with callParams:CallParams)->String?;
-    func login(_ userId:String)
-    func setDisplayName(_ name:String)
     func answer()
     func hangup()
     func sendMessage(params:MessageParams)->MessageParams?;
-    
+    func terminate();
+    func terminateGracefully();
     
     var callDelegate:CallDelegate?{get set}
     var inCall:Bool{get set}
@@ -84,7 +87,6 @@ class CallResultObjC:NSObject{
     func internalMessageReceived(messageParams:MessageParams);
     func goOffline()
     func goOnline()
-    func logout()
     
     
     

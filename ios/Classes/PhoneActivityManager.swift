@@ -28,6 +28,9 @@ class PhoneActivityManager:NSObject{
     func login(_ userId:String){
         self.callManager.login(userId)
     }
+    func logout(){
+        self.callManager.logout()
+    }
     func setDisplayName(_ name:String){
         self.callManager.setDisplayName(name)
     }
@@ -37,9 +40,17 @@ class PhoneActivityManager:NSObject{
     func hangup(){
         self.callManager.hangup()
     }
-    func sendMessage(params:MessageParams){
-        self.callManager.sendMessage(params: params)
+    func sendMessage(params:MessageParams)->MessageParams?{
+        return self.callManager.sendMessage(params: params)
     }
+    func terminate(){
+        self.callManager.terminate()
+    }
+    func terminateGracefully(){
+        self.callManager.terminateGracefully()
+    }
+    
+    
     
     
   
@@ -70,8 +81,6 @@ class PhoneActivityManager:NSObject{
     func goOnline(){
         self.callManager.goOnline()
     }
-    func logout(){
-        self.callManager.logout()
-    }
+    
    
 }

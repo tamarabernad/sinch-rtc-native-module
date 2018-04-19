@@ -238,6 +238,11 @@ extension SinchCallManager:CallManageable{
         self.userId = userId;
         self.initSinchClient(with: userId)
     }
+    func logout(){
+        self.client?.unregisterPushNotificationDeviceToken()
+        self.client?.stopListeningOnActiveConnection()
+        self.client = nil;
+    }
     func setDisplayName(_ name:String){
         self.push.setDisplayName(name);
     }
@@ -286,6 +291,22 @@ extension SinchCallManager:CallManageable{
         }
         return self.messageDelegate?.sendMessage(params: params)
     }
+    func terminate(){
+        if(client != nil){
+            client?.stopListeningOnActiveConnection()
+            client?.terminate()
+        }
+    }
+    func terminateGracefully(){
+        if(client != nil){
+            client?.stopListeningOnActiveConnection()
+            client?.terminateGracefully()
+        }
+    }
+    
+    
+    
+    
     
     
     func application(_ application: UIApplication,
@@ -313,11 +334,7 @@ extension SinchCallManager:CallManageable{
     func goOnline(){
     }
     
-    func logout(){
-        self.client?.unregisterPushNotificationDeviceToken()
-        self.client?.stopListeningOnActiveConnection()
-        self.client = nil;
-    }
+    
     
     
     func cutCall() {
