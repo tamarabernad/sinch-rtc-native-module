@@ -10,11 +10,7 @@ import Foundation
 class MessageParams:NSObject{
     var text: String?
     var headers:[String: String]?;
-//    var role:String?
-//    var type:String?
     var senderId:String?
     var receiverIds:[String]?
-//    var remoteUserId:String?
-//    var timestamp:Date?;
     var messageId:String?
 }

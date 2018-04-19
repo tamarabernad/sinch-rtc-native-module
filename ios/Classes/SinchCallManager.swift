@@ -21,32 +21,8 @@ let SINAPSEnvironmentAutomatic = SINAPSEnvironment.production
 
 
 class SinchCallManager:NSObject{
-//    public struct Notification{
-//        static let didReceiveCall = NSNotification.Name(kCallDidReceiveCall);
-//    }
-  
-    var callDirection: CallDirection{
-        return self.sinchCall?.direction == .incoming ? .incoming : .outgoing;
-    }
-    var establishedTime: Date?{
-        return self.sinchCall?.details.establishedTime
-    }
-    var callDuration:NSNumber?{
-        guard let begin = sinchCall?.details.establishedTime,let end = sinchCall?.details.endedTime else {
-            return nil;
-        }
-        
-        return NSNumber(value: end.timeIntervalSince(begin))
-    }
-//    var remoteUserId: String?{
-//        return self.sinchCall?.remoteUserId
-//    }
-    var callId: String?{
-        return self.sinchCall?.callId
-    }
-//    var level: String?{
-//        return self.callLevel
-//    }
+    
+    var inCall:Bool = false;
     var isCallKit: Bool{
         guard let _callKitProvider = callKitProvider, let _sinchCall = sinchCall else {return false}
         return _callKitProvider.callExists(_sinchCall)
@@ -55,44 +31,19 @@ class SinchCallManager:NSObject{
     var messageDelegate:SinchMessageDelegate?
     
     var sinchCall:SINCall?;
-    var callStatus:CallStatus = .none {
-        didSet {
-            self.callDelegate?.callDidChangeStatus(status: callStatus.rawValue)
-        }
-    }
-    var call:Any?;
-//    var callLevel:String = "";
-    var callParams:CallParams?;
-//    var callPaymentSourceId:String?;
-  
     var push:SINManagedPush;
     var client:SINClient?;
     var callKitProvider:SINCallKitProvider?;
-    var inCall:Bool = false;
     var remoteNotificationIncomingDisplayName:String?;
     var callerDisplayName:String{
         get{
             guard let _remote = remoteNotificationIncomingDisplayName else {
-                return "BlueCaller"
+                return "Caller"
             }
             return _remote;
         }
     }
-    var userId:String?;
-    
-    var logNotes:String = "";
     var isMessagingEnabled:Bool;
-    var audioController:PhoneAudioController = PhoneAudioController();
-    
-    var eventCallPayment:String{
-        guard let _params = callParams else { return "unknown" }
-        return _params.isFirstFreeCall ? "first-free-call" : "standard"
-    }
-    var isFirstFreeCall:Bool{
-        guard let _params = callParams else { return false }
-        return _params.isFirstFreeCall;
-    }
-    
     init(_ messagingEnabled:Bool = true) {
         push = Sinch.managedPush(with: SINAPSEnvironmentAutomatic)
         isMessagingEnabled = messagingEnabled;
@@ -100,13 +51,6 @@ class SinchCallManager:NSObject{
 
         self.push.delegate = self;
         self.push.setDesiredPushTypeAutomatically()
-    }
-    func addLogNote(note:String){
-        logNotes.append(note);
-        logNotes.append(";");
-    }
-    func flushLogNote(){
-        logNotes = "";
     }
     func initSinchClient(with userId:String){
         if(client == nil){
@@ -133,8 +77,6 @@ class SinchCallManager:NSObject{
     }   
     func disabledUserDefaultsStatusReceiveIncomingCalls()->Bool{
         return false;
-//        guard let status = DataProvider.installation().userStatus else {return false}
-//        return BCUser.disabledReceiveIncomingCallsStatus(status);
     }
     func canReceiveIncomingCall()->Bool{
         return !self.disabledUserDefaultsStatusReceiveIncomingCalls() && !self.inCall;
@@ -146,19 +88,14 @@ extension SinchCallManager:SINCallClientDelegate{
         if(!self.canReceiveIncomingCall()){return;}
         self.sinchCall = call;
         self.sinchCall?.delegate = self
-        if(!self.isCallKit){
-            self.audioController.playIncomingCall();
-        }
+        
         self.callKitProvider?.reportNewIncomingCall(call, withDisplayName: self.callerDisplayName);
-       // NotificationCenter.default.post(name: Notification.didReceiveCall, object: nil, userInfo: nil)
-        self.callStatus = .progressing
     }
     func client(_ client: SINCallClient!, willReceiveIncomingCall call: SINCall!) {
         if(!self.canReceiveIncomingCall()){return;}
         self.sinchCall = call;
         self.sinchCall?.delegate = self
         self.callKitProvider?.reportNewIncomingCall(call, withDisplayName: self.callerDisplayName);
-        self.callStatus = .progressing
     }
     
     func client(_ client: SINCallClient!, localNotificationForIncomingCall call: SINCall!) -> SINLocalNotification! {
@@ -173,7 +110,6 @@ extension SinchCallManager:SINCallClientDelegate{
 //        notification.alertAction = "SIN_INCOMING_CALL".localized
 //        notification.alertBody = NSString.localizedStringWithFormat("SIN_INCOMING_CALL_DISPLAY_NAME".localized as NSString, self.callerDisplayName) as String!;
         notification.soundName = "incoming.wav"
-        self.audioController.startCallVibration(repeatCount: 5);
         return notification;
     }
 
@@ -200,7 +136,7 @@ extension SinchCallManager:SINManagedPushDelegate{
         
         guard let result = self.client?.relayRemotePushNotification(payload) else{return}
         if(result.isCall()){
-            guard let callResult = result.call() else{return;}
+            guard let _ = result.call() else{return;}
         }else if(result.isMessage()){
             
             self.showIncominMessageNotificationWithPayload(payload! as NSDictionary, senderId: result.messageResult().senderId)
@@ -230,12 +166,7 @@ extension SinchCallManager:SINManagedPushDelegate{
     }
 }
 extension SinchCallManager:CallManageable{
-//    var remoteUserId: String? {
-//        <#code#>
-//    }
-    
     func login(_ userId:String){
-        self.userId = userId;
         self.initSinchClient(with: userId)
     }
     func logout(){
@@ -251,35 +182,12 @@ extension SinchCallManager:CallManageable{
         guard let call = self.client?.call().callUser(withId: callParams.calleeId) else {return nil;}
         self.sinchCall = call;
         self.sinchCall?.delegate = self
-        //        self.callLevel = callParams.level;
-        //        self.callPaymentSourceId = callParams.paymentSourceId;
-        self.callParams = callParams;
-        self.flushLogNote();
-        
-        //        BCDataProvider.beginCall(withProviderCallId: call.callId, receiverId: call.remoteUserId , andLevel: self.callLevel, andPaymentSourceId: self.callPaymentSourceId, withCompletion: { (result, error) in
-        //            if((error) != nil){return;}
-        //            guard let _result = result as? BCCallInfo else{
-        //                self.call = nil;
-        //                return;
-        //            }
-        //            self.call = _result;
-        //            self.call?.persist();
-        //            self.callDelegate?.callWasStored()
-        //        })
-        self.callStatus = .initiated
         return call.callId;
-        //NotificationCenter.default.post(name: Notification.didReceiveCall, object: nil, userInfo: nil)
     }
     func answer() {
-        self.audioController.stopCallSound();
-        self.addLogNote(note: "call-answer");
         self.sinchCall?.answer()
-        self.callStatus = .connecting
     }
     func hangup() {
-        self.audioController.stopCallSound();
-        
-        self.addLogNote(note: "call-hangup");
         self.sinchCall?.hangup()
     }
     func sendMessage(params:MessageParams)->MessageParams?{
@@ -303,16 +211,9 @@ extension SinchCallManager:CallManageable{
             client?.terminateGracefully()
         }
     }
-    
-    
-    
-    
-    
-    
+
     func application(_ application: UIApplication,
                      didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data){
-        //    if(_hasRegisteredNotfications)return;
-        //    _hasRegisteredNotfications = YES;
         self.push.application(application, didRegisterForRemoteNotificationsWithDeviceToken: deviceToken);
     }
     func application(_ application: UIApplication,
@@ -324,40 +225,15 @@ extension SinchCallManager:CallManageable{
                      fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void){
         self.push.application(application, didReceiveRemoteNotification: userInfo)
     }
-    
-    
-    func internalMessageReceived(messageParams:MessageParams){
-        self.messageDelegate?.internalMessageReceived(messageParams: messageParams);
-    }
-    func goOffline(){
-    }
-    func goOnline(){
-    }
-    
-    
-    
-    
-    func cutCall() {
-        self.audioController.stopCallSound();
-        
-        self.addLogNote(note: "call-cut");
-        self.sinchCall?.hangup()
-    }
 }
 extension SinchCallManager:SINCallDelegate{
     func callDidProgress(_ call: SINCall!) {
-        audioController.playOutgoingCall()
         self.callDelegate?.callDidProgress()
-        self.callStatus = .progressing
     }
     func callDidEnd(_ call: SINCall!) {
-        audioController.stopCallSound()
-        
         inCall = false;
         var result:String = "";
-        if let error = call.details.error as NSError?{
-
-            self.addLogNote(note: error.localizedDescription)
+        if let _ = call.details.error as NSError?{
             result = ""
         }else{
             let cause = call.details.endCause;
@@ -394,27 +270,10 @@ extension SinchCallManager:SINCallDelegate{
         }
         self.callDelegate?.callDidEnd(reason: result, duration: duration)
         self.callKitProvider?.reportCallEnded(call)
-        self.callStatus = .finished
         self.remoteNotificationIncomingDisplayName = nil;
     }
     func callDidEstablish(_ call: SINCall!) {
-        audioController.stopCallSound()
-        
         inCall = true;
-        
-//        if let _callId = self.call?.uid, let _sinchCall = self.sinchCall, _sinchCall.direction == .outgoing
-//        {
-//            self.addLogNote(note: "call-established")
-//            let status:CallStatus = .connected;
-//            self.call?.status = status.rawValue;
-//            self.call?.note = self.logNotes;
-//            self.call?.persist()
-////            BCDataProvider.updateCall(withUid: _callId, status: status.rawValue, andResult: nil, andNote: nil, withCompletion: nil);
-//        }
-//        BCDataProvider.setLineStatus(BCUser.lineStatusBusy(), withCompletion: nil)
-      
         self.callDelegate?.callDidEstablish()
-        self.callStatus = .connected
     }
-    
 }

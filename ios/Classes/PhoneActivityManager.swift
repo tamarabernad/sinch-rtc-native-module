@@ -72,15 +72,15 @@ class PhoneActivityManager:NSObject{
         return self.callManager.call(with: callParams)
     }
     
-    func internalMessageReceived(messageParams:MessageParams){
-        self.callManager.internalMessageReceived(messageParams: messageParams);
-    }
-    func goOffline(){
-        self.callManager.goOffline()
-    }
-    func goOnline(){
-        self.callManager.goOnline()
-    }
+//    func internalMessageReceived(messageParams:MessageParams){
+//        self.callManager.internalMessageReceived(messageParams: messageParams);
+//    }
+//    func goOffline(){
+//        self.callManager.goOffline()
+//    }
+//    func goOnline(){
+//        self.callManager.goOnline()
+//    }
     
    
 }
