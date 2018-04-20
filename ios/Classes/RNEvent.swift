@@ -14,8 +14,8 @@ class RNEvent:NSObject{
     public static let CallDidEstablish = "callDidEstablish"
     public static let CallDidProgress = "callDidProgress"
     
-    public static let MessageReceived = "messageReceived"
-    public static let MessageSent = "messageSent"
-    public static let MessageDelivered = "messageDelivered"
-    public static let MessageFailed = "messageFailed"
+    public static let MessageReceived = "didReceiveMessage"
+    public static let MessageSent = "didSendMessage"
+    public static let MessageDelivered = "didDeliverMessage"
+    public static let MessageFailed = "didFailMessage"
 }
