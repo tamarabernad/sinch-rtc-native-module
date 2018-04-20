@@ -29,7 +29,7 @@ RCT_EXPORT_MODULE()
 }
 
 
-// User
+#pragma mark - User
 RCT_EXPORT_METHOD(login:(NSString *)username)
 {
     [PhoneActivityManager.instance login:username];
@@ -40,7 +40,7 @@ RCT_EXPORT_METHOD(setDisplayName:(NSString *)displayName)
     [PhoneActivityManager.instance setDisplayName:displayName];
 }
 
-// Sinch Client
+#pragma mark - Sinch Client
 RCT_EXPORT_METHOD(terminateGracefully)
 {
     [PhoneActivityManager.instance terminateGracefully];
@@ -51,7 +51,7 @@ RCT_EXPORT_METHOD(terminate)
     [PhoneActivityManager.instance terminate];
 }
 
-// Call
+#pragma mark - Call
 RCT_EXPORT_METHOD(call:(NSString *)userId callback:(RCTResponseSenderBlock) callback)
 {
     CallParams *params = [CallParams new];
@@ -70,7 +70,7 @@ RCT_EXPORT_METHOD(hangup)
     [PhoneActivityManager.instance hangup];
 }
 
-// Instant Messages
+#pragma mark - Instant Messages
 RCT_EXPORT_METHOD(sendMessage:(NSString *)receiverUserId
                   text:(NSString *)text
                   headers:(NSDictionary *)headers
@@ -85,6 +85,26 @@ RCT_EXPORT_METHOD(sendMessage:(NSString *)receiverUserId
     if(result){
         callback(@[result.messageId, result.receiverIds, result.text]);
     }
+}
+
+#pragma mark - Notifications
+#pragma mark Notification Requesting
++ (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings{
+    
+}
++ (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+      [PhoneActivityManager.instance application:application didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
+}
++ (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
+    NSLog(@"%@:%@", NSStringFromSelector(_cmd), error);
+}
+
+#pragma mark Notification Handling
++ (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification{
+    
+}
++ (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
+      [PhoneActivityManager.instance application:application didReceiveRemoteNotification:userInfo];
 }
 
 #pragma mark - CallDelegate

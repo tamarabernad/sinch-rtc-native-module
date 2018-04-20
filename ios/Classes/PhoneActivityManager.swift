@@ -14,7 +14,7 @@ class PhoneActivityManager:NSObject{
     var callManager:CallManageable;
   
     private override init() {
-      self.callManager = SinchCallManager()
+      self.callManager = SinchCallManager(true)
     }
   
     var inCall:Bool{
@@ -49,10 +49,6 @@ class PhoneActivityManager:NSObject{
     func terminateGracefully(){
         self.callManager.terminateGracefully()
     }
-    
-    
-    
-    
   
     func application(_ application: UIApplication,
                      didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data){
@@ -71,16 +67,5 @@ class PhoneActivityManager:NSObject{
     func call(with callParams:CallParams)->String?{
         return self.callManager.call(with: callParams)
     }
-    
-//    func internalMessageReceived(messageParams:MessageParams){
-//        self.callManager.internalMessageReceived(messageParams: messageParams);
-//    }
-//    func goOffline(){
-//        self.callManager.goOffline()
-//    }
-//    func goOnline(){
-//        self.callManager.goOnline()
-//    }
-    
    
 }

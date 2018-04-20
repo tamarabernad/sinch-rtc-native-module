@@ -4,11 +4,19 @@
 #import <React/RCTEventEmitter.h>
 #else
 #import "RCTBridgeModule.h"
-#import "RCTEventEmitter.h"
+//#import "RCTEventEmitter.h"
 #endif
 
 
 @interface RNSinchRtc : RCTEventEmitter <RCTBridgeModule>
+#pragma mark - Notifications
+#pragma mark Notification Requesting
++ (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings;
++ (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken;
++ (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error;
 
+#pragma mark Notification Handling
++ (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification;
++ (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo;
 @end
   

@@ -197,7 +197,23 @@ extension SinchCallManager:CallManageable{
                 initSinchClient(with: userId as! String);
             }
         }
-        return self.messageDelegate?.sendMessage(params: params)
+        guard let _receivers = params.receiverIds else {return nil};
+        guard let _text = params.text else {return nil};
+        
+        let message = SINOutgoingMessage(recipients: _receivers, text: _text)
+        
+        if let _headers = params.headers {
+            for header in _headers{
+                message?.addHeader(withValue: header.value, key: header.key)
+            }
+        }
+        
+        guard let _client = self.client?.messageClient() else {return nil;}
+        _client.send(message)
+        
+        let result = params.copy() as! MessageParams
+        result.messageId = message?.messageId;
+        return result;
     }
     func terminate(){
         if(client != nil){

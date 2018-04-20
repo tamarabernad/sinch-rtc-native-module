@@ -13,4 +13,14 @@ class MessageParams:NSObject{
     var senderId:String?
     var receiverIds:[String]?
     var messageId:String?
+    
+    override func copy() -> Any {
+        let _copy = MessageParams();
+        _copy.text = text
+        _copy.headers = headers
+        _copy.senderId = senderId
+        _copy.receiverIds = receiverIds
+        _copy.messageId = messageId
+        return _copy
+    }
 }
