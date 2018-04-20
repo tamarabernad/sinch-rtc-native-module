@@ -119,7 +119,7 @@ RCT_EXPORT_METHOD(sendMessage:(NSString *)receiverUserId
 }
 
 - (void)callDidEndWithReason:(NSString *)reason duration:(double)duration{
-    [self sendEventWithName:RNEvent.CallEndedWithReason body:@{@"duration":@(duration), @"reason":@""}];
+    [self sendEventWithName:RNEvent.CallEndedWithReason body:@{@"duration":@(duration), @"reason":reason}];
 }
 
 - (void)callDidEstablish {
