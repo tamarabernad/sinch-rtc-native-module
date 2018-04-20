@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		6302C9092088E3530045F91C /* RNEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6302C9082088E3530045F91C /* RNEvent.swift */; };
+		6354DF15208A21C400F5FE95 /* MessagesDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6354DF14208A21C400F5FE95 /* MessagesDelegate.swift */; };
 		639119142087AD440070F17E /* AudioControllerDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 639119092087AD440070F17E /* AudioControllerDelegate.m */; };
 		639119152087AD450070F17E /* CallDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6391190A2087AD440070F17E /* CallDelegate.swift */; };
 		639119162087AD450070F17E /* CallManageable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6391190B2087AD440070F17E /* CallManageable.swift */; };
@@ -16,7 +17,6 @@
 		639119192087AD450070F17E /* PhoneActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6391190E2087AD440070F17E /* PhoneActivityManager.swift */; };
 		6391191B2087AD450070F17E /* SINCallKitProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 639119112087AD440070F17E /* SINCallKitProvider.m */; };
 		6391191C2087AD450070F17E /* SinchCallManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639119122087AD440070F17E /* SinchCallManager.swift */; };
-		6391191D2087AD450070F17E /* SinchMessageDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639119132087AD440070F17E /* SinchMessageDelegate.swift */; };
 		B3E7B58A1CC2AC0600A0062D /* RNSinchRtc.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E7B5891CC2AC0600A0062D /* RNSinchRtc.m */; };
 /* End PBXBuildFile section */
 
@@ -35,6 +35,7 @@
 /* Begin PBXFileReference section */
 		134814201AA4EA6300B7C361 /* libRNSinchRtc.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRNSinchRtc.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		6302C9082088E3530045F91C /* RNEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RNEvent.swift; sourceTree = "<group>"; };
+		6354DF14208A21C400F5FE95 /* MessagesDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesDelegate.swift; sourceTree = "<group>"; };
 		639119042087ACA60070F17E /* RNSinchRtc-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RNSinchRtc-Bridging-Header.h"; sourceTree = "<group>"; };
 		639119082087AD440070F17E /* AudioControllerDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioControllerDelegate.h; sourceTree = "<group>"; };
 		639119092087AD440070F17E /* AudioControllerDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AudioControllerDelegate.m; sourceTree = "<group>"; };
@@ -46,7 +47,6 @@
 		639119102087AD440070F17E /* SINCallKitProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SINCallKitProvider.h; sourceTree = "<group>"; };
 		639119112087AD440070F17E /* SINCallKitProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SINCallKitProvider.m; sourceTree = "<group>"; };
 		639119122087AD440070F17E /* SinchCallManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SinchCallManager.swift; sourceTree = "<group>"; };
-		639119132087AD440070F17E /* SinchMessageDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SinchMessageDelegate.swift; sourceTree = "<group>"; };
 		B3E7B5881CC2AC0600A0062D /* RNSinchRtc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNSinchRtc.h; sourceTree = "<group>"; };
 		B3E7B5891CC2AC0600A0062D /* RNSinchRtc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNSinchRtc.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -94,8 +94,8 @@
 				639119102087AD440070F17E /* SINCallKitProvider.h */,
 				639119112087AD440070F17E /* SINCallKitProvider.m */,
 				639119122087AD440070F17E /* SinchCallManager.swift */,
-				639119132087AD440070F17E /* SinchMessageDelegate.swift */,
 				6302C9082088E3530045F91C /* RNEvent.swift */,
+				6354DF14208A21C400F5FE95 /* MessagesDelegate.swift */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -158,9 +158,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				639119162087AD450070F17E /* CallManageable.swift in Sources */,
-				6391191D2087AD450070F17E /* SinchMessageDelegate.swift in Sources */,
 				6391191C2087AD450070F17E /* SinchCallManager.swift in Sources */,
 				639119192087AD450070F17E /* PhoneActivityManager.swift in Sources */,
+				6354DF15208A21C400F5FE95 /* MessagesDelegate.swift in Sources */,
 				639119172087AD450070F17E /* CallParams.swift in Sources */,
 				B3E7B58A1CC2AC0600A0062D /* RNSinchRtc.m in Sources */,
 				6302C9092088E3530045F91C /* RNEvent.swift in Sources */,

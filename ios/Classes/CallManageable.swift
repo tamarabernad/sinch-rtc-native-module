@@ -11,6 +11,7 @@ import UIKit
 
 @objc protocol CallManageable{
     var callDelegate:CallDelegate?{get set}
+    var messagesDelegate:MessagesDelegate?{get set}
     
     func login(_ userId:String)
     func logout()

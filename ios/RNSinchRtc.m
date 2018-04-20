@@ -2,7 +2,7 @@
 #import "RNSinchRtc.h"
 #import "RNSinchRtc-Swift.h"
 
-@interface RNSinchRtc()<CallDelegate>
+@interface RNSinchRtc()<CallDelegate, MessagesDelegate>
 
 @end
 @implementation RNSinchRtc
@@ -10,6 +10,7 @@
 - (instancetype)init{
     if(self = [super init]){
         PhoneActivityManager.instance.callManager.callDelegate = self;
+        PhoneActivityManager.instance.callManager.messagesDelegate = self;
     }
     return self;
 }
@@ -25,7 +26,11 @@ RCT_EXPORT_MODULE()
     return @[RNEvent.CallDidChangeStatus,
              RNEvent.CallEndedWithReason,
              RNEvent.CallDidEstablish,
-             RNEvent.CallDidProgress,];
+             RNEvent.CallDidProgress,
+             RNEvent.MessageReceived,
+             RNEvent.MessageSent,
+             RNEvent.MessageDelivered,
+             RNEvent.MessageFailed];
 }
 
 
@@ -126,5 +131,45 @@ RCT_EXPORT_METHOD(sendMessage:(NSString *)receiverUserId
     NSLog(@"callDidProgress");
     [self sendEventWithName:RNEvent.CallDidProgress body:nil];
 }
+
+#pragma mark - MessagesDelegate
+- (void)didReceiveMessageWithMessageId:(NSString * _Nonnull)messageId headers:(NSDictionary * _Nonnull)headers senderId:(NSString * _Nonnull)senderId recipients:(NSArray * _Nonnull)recipients text:(NSString * _Nonnull)text date:(NSDate * _Nonnull)date {
+    [self sendEventWithName:RNEvent.MessageReceived body:@{@"messageId":messageId,
+                                                           @"headers":headers,
+                                                           @"senderId":senderId,
+                                                           @"recipients":recipients,
+                                                           @"content":text,
+                                                           @"timeStamp":date
+                                                           }];
+}
+
+- (void)messageWasSentWithMessageId:(NSString * _Nonnull)messageId headers:(NSDictionary * _Nonnull)headers recipients:(NSArray * _Nonnull)recipients text:(NSString * _Nonnull)text date:(NSDate * _Nonnull)date {
+    [self sendEventWithName:RNEvent.MessageSent body:@{@"messageId":messageId,
+                                                           @"headers":headers,
+                                                           @"recipients":recipients,
+                                                           @"content":text,
+                                                           @"timeStamp":date
+                                                           }];
+    
+}
+
+- (void)messageWasDeliveredWithMessageId:(NSString * _Nonnull)messageId recipient:(NSString * _Nonnull)recipient date:(NSDate * _Nonnull)date {
+    [self sendEventWithName:RNEvent.MessageDelivered body:@{@"messageId":messageId,
+                                                            @"recipient":recipient,
+                                                            @"timeStamp":date
+                                                            }];
+}
+
+- (void)messageFaildToDeliverWithMessageId:(NSString * _Nonnull)messageId headers:(NSDictionary * _Nonnull)headers recipients:(NSArray * _Nonnull)recipients text:(NSString * _Nonnull)text date:(NSDate * _Nonnull)date error:(NSError * _Nonnull)error {
+        [self sendEventWithName:RNEvent.MessageFailed body:@{@"messageId":messageId,
+                                                               @"headers":headers,
+                                                               @"recipients":recipients,
+                                                               @"content":text,
+                                                               @"timeStamp":date,
+                                                               @"error":error.localizedDescription
+                                                               }];
+}
+
+
 
 @end

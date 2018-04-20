@@ -7,15 +7,6 @@
 //
 
 import Foundation
-@objc enum CallEndReason:Int {
-    case errorNoUser;
-    case errorGeneral;
-    case canceled;
-    case noAnswer;
-    case declined;
-    case timeout;
-    case hangup;
-}
 @objc protocol CallDelegate{
     func callDidEnd(reason:String, duration:Double)
     func callDidEstablish()

@@ -28,7 +28,7 @@ class SinchCallManager:NSObject{
         return _callKitProvider.callExists(_sinchCall)
     }
     var callDelegate:CallDelegate?
-    var messageDelegate:SinchMessageDelegate?
+    var messagesDelegate:MessagesDelegate?
     
     var sinchCall:SINCall?;
     var push:SINManagedPush;
@@ -60,15 +60,13 @@ class SinchCallManager:NSObject{
             client?.delegate = self
             client?.call().delegate = self
             if(self.isMessagingEnabled){
-                messageDelegate = SinchMessageDelegate()
-                messageDelegate?.messageClient = client?.messageClient();
+                client?.messageClient().delegate = self
                 client?.setSupportMessaging(true)
             }
             client?.setSupportCalling(true)
             client?.enableManagedPushNotifications()
             client?.start()
             client?.startListeningOnActiveConnection()
-            
             
             guard let _client = client else {return}
             callKitProvider = SINCallKitProvider(client: _client)
@@ -291,5 +289,24 @@ extension SinchCallManager:SINCallDelegate{
     func callDidEstablish(_ call: SINCall!) {
         inCall = true;
         self.callDelegate?.callDidEstablish()
+    }
+}
+extension SinchCallManager:SINMessageClientDelegate{
+
+    func messageClient(_ messageClient:SINMessageClient!, didReceiveIncomingMessage message: SINMessage!) {
+        self.messagesDelegate?.didReceiveMessage(messageId: message.messageId, headers: message.headers, senderId: message.senderId, recipients: message.recipientIds, text: message.text, date: message.timestamp);
+    }
+    func messageSent(_ message: SINMessage!, recipientId: String!) {
+        self.messagesDelegate?.messageWasSent(messageId: message.messageId, headers: message.headers, recipients: message.recipientIds, text: message.text, date: message.timestamp)
+    }
+    func message(_ message: SINMessage!, shouldSendPushNotifications pushPairs: [Any]!) {
+        
+    }
+    func messageDelivered(_ info: SINMessageDeliveryInfo!) {
+        self.messagesDelegate?.messageWasDelivered(messageId: info.messageId, recipient: info.recipientId, date: info.timestamp)
+    }
+    public func messageFailed(_ message: SINMessage!, info messageFailureInfo: SINMessageFailureInfo!) {
+        self.messagesDelegate?.messageFaildToDeliver(messageId: message.messageId, headers: message.headers
+            , recipients: message.recipientIds, text: message.text, date: message.timestamp, error: messageFailureInfo.error)
     }
 }
