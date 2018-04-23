@@ -7,12 +7,36 @@
 
 `$ npm install react-native-sinch-rtc --save`
 
-### Mostly automatic installation
+## Add Library
+
+### Android
+
+1. Download [Sinch SDK](https://www.sinch.com/downloads/) for Android and move sinch .aar library file to your android folder in a libs folder
+2. In module gradle file:
+Add to repositories
+`flatDir { dirs './libs' }`
+`maven { url 'https://maven.google.com'  }`
+
+To dependencies
+`compile 'com.google.firebase:firebase-messaging:11.8.0'`
+
+And apply plugin
+`apply plugin: 'com.google.gms.google-services'`
+
+3. To project gradle file:
+`classpath 'com.google.gms:google-services:3.1.1'`
+
+### iOS
+
+1. Add Sinch dependency to your Podfile inside ios folder`pod 'SinchRTC'`
+2. Inside ios folder run `pod install`
+
+
+## Link Automatic
 
 `$ react-native link react-native-sinch-rtc`
 
-### Manual installation
-
+## Link Manually
 
 #### iOS
 
@@ -23,7 +47,7 @@
 
 #### Android
 
-1. Open up `android/app/src/main/java/[...]/MainActivity.java`
+1. Open up `android/app/src/main/java/[...]/MainApplication.java`
   - Add `import com.reactlibrary.RNSinchRtcPackage;` to the imports at the top of the file
   - Add `new RNSinchRtcPackage()` to the list returned by the `getPackages()` method
 2. Append the following lines to `android/settings.gradle`:
@@ -36,32 +60,61 @@
       compile project(':react-native-sinch-rtc')
   	```
 
+## Setup
 
-## Usage
-```javascript
-import RNSinchRtc from 'react-native-sinch-rtc';
+### Android
+Add Keys, Secret and Environment to your Manifest
 
-// TODO: What to do with the module?
-RNSinchRtc;
+```xml
+<service android:name="com.bluecall.sinch.SinchService">
+    <meta-data android:name="messages_handler" android:value="com.bluecallapp.utils.sinch.MessagesHandler" />
+    <meta-data
+        android:name="SINCH_APP_KEY"
+        android:value="@string/SINCH_APP_KEY" />
+    <meta-data
+        android:name="SINCH_APP_SECRET"
+        android:value="@string/SINCH_APP_SECRET" />
+    <meta-data
+        android:name="SINCH_ENVIRONMENT"
+        android:value="@string/SINCH_ENVIRONMENT" />
+</service>
+
 ```
 
-react-native link
 
-Copy paste .aar to your android folder
-  repositories flatDir { dirs './libs' }
+## Usage
+
+### React Native
+
+#### Calling
+```javascript
+import { NativeModules } from 'react-native';
+
+NativeModules.RNSinchRtc.login('username');
+NativeModules.RNSinchRtc.setDisplayName('username');
+
+NativeModules.RNSinchRtc.call('user_id', callId => {
+    console.log(callId);
+}
+
+NativeModules.RNSinchRtc.hangup();
 
 
-  dependencies
-compile "com.facebook.react:react-native:+"  // From node_modules
-    compile 'com.google.firebase:firebase-messaging:11.8.0'
+const emitter = Platform.OS === 'android' ? DeviceEventEmitter : new NativeEventEmitter(NativeModules.RNSinchRtc);
+emitter.addListener('callEndedWithReason', event => {
+    console.log(event.duration);
+    console.log(event.reason);
+});
 
-    apply plugin: 'com.google.gms.google-services'
-
-    repositories 
-    maven { url 'https://maven.google.com'  }
-
-To project
-    classpath 'com.google.gms:google-services:3.1.1'
+emitter.addListener('callDidEstablish', event => {});
+emitter.addListener('callDidProgress', event => {});
+```
 
 
-    Add to main project google-services.json
+### Android
+
+#### Notifications
+The developer is reponsible of how the Notifications are shown for the incoming Instant Messages. To handle the notifications the class will need to implement `MessagesHandlerable`, this class will implement:
+- `onIncomingMessage` at this point you have the option to present a local notification
+- `onSendingMessage` at this point the user is sending a message and the developer has the option to do any required treatment needed for the sent message.
+
