@@ -13,6 +13,7 @@ import UIKit
     var callDelegate:CallDelegate?{get set}
     var messagesDelegate:MessagesDelegate?{get set}
     
+    init(props:[String:Any]);
     func login(_ userId:String)
     func logout()
     func setDisplayName(_ name:String)

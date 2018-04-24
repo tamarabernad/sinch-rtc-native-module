@@ -9,6 +9,9 @@
 
 
 @interface RNSinchRtc : RCTEventEmitter <RCTBridgeModule>
+#pragma mark - Setup
++ (void) initialize:(NSDictionary *)properties;
+
 #pragma mark - Notifications
 #pragma mark Notification Requesting
 + (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings;

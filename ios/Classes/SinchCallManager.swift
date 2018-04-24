@@ -21,6 +21,11 @@ let SINAPSEnvironmentAutomatic = SINAPSEnvironment.production
 
 
 class SinchCallManager:NSObject{
+    // Environment
+    var isMessagingEnabled:Bool = false;
+    var appKey:String = "";
+    var appSecret:String = "";
+    var host:String = "";
     
     var inCall:Bool = false;
     var isCallKit: Bool{
@@ -43,19 +48,27 @@ class SinchCallManager:NSObject{
             return _remote;
         }
     }
-    var isMessagingEnabled:Bool;
-    init(_ messagingEnabled:Bool = true) {
+    
+    required init(props: [String : Any]) {
         push = Sinch.managedPush(with: SINAPSEnvironmentAutomatic)
-        isMessagingEnabled = messagingEnabled;
+        if let _isMessagingEnabled = props["isMessagingEnabled"] as? Bool{
+            isMessagingEnabled = _isMessagingEnabled;
+        }
+        if let _appKey = props["appKey"] as? String, let _appSecret = props["appSecret"] as? String, let _host = props["host"] as? String{
+            appKey = _appKey;
+            appSecret = _appSecret;
+            host = _host;
+        }
         super.init()
-
+        
         self.push.delegate = self;
         self.push.setDesiredPushTypeAutomatically()
     }
+    
     func initSinchClient(with userId:String){
         if(client == nil){
             UserDefaults.standard.set(userId, forKey: "userId");
-            client = Sinch.client(withApplicationKey: "4a279d6c-4ebf-4dfc-9297-94c03e307f34", applicationSecret: "BCm/KEUAKU2PbpaukRzdGg==", environmentHost: "sandbox.sinch.com", userId: userId)
+            client = Sinch.client(withApplicationKey: appKey, applicationSecret: appSecret, environmentHost: host, userId: userId)
           
             client?.delegate = self
             client?.call().delegate = self

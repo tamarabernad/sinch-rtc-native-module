@@ -32,7 +32,10 @@ RCT_EXPORT_MODULE()
              RNEvent.MessageDelivered,
              RNEvent.MessageFailed];
 }
-
+#pragma mark - Setup
++ (void) initialize:(NSDictionary *)properties{
+    [PhoneActivityManager.instance initializeWithProps:properties];
+}
 
 #pragma mark - User
 RCT_EXPORT_METHOD(login:(NSString *)username)
