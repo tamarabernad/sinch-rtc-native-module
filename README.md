@@ -81,6 +81,22 @@ Add Keys, Secret and Environment to your Manifest
 
 ```
 
+### iOS
+Add Keys, Secret and Environment to the Module initialization
+
+```Objective-C
+
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions{
+
+  [RNSinchRtc initialize:@{@"isMessagingEnabled":@YES,
+                           @"appKey":@"",
+                           @"appSecret":@"",
+                           @"host":@"",
+                           }];
+}
+```
+
+
 
 ## Usage
 
