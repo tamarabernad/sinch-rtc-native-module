@@ -9,17 +9,6 @@
 import Foundation
 import UIKit
 
-#if NDEBUG
-let SINAPSEnvironmentAutomatic = SINAPSEnvironment.production
-#else
-#if DEBUG
-let SINAPSEnvironmentAutomatic = SINAPSEnvironment.development
-#else
-let SINAPSEnvironmentAutomatic = SINAPSEnvironment.production
-#endif  // ifdef DEBUG
-#endif  // ifdef NDEBUG
-
-
 class SinchCallManager:NSObject{
     // Environment
     var isMessagingEnabled:Bool = false;
@@ -34,6 +23,8 @@ class SinchCallManager:NSObject{
     }
     var callDelegate:CallDelegate?
     var messagesDelegate:MessagesDelegate?
+    var notificationsHandler:NotificationsHandlerable?
+    var messagesHandler:MessagesHandlerable?
     
     var sinchCall:SINCall?;
     var push:SINManagedPush;
@@ -50,7 +41,13 @@ class SinchCallManager:NSObject{
     }
     
     required init(props: [String : Any]) {
-        push = Sinch.managedPush(with: SINAPSEnvironmentAutomatic)
+        var environment = SINAPSEnvironment.production;
+        if let _environment = props["environment"] as? String{
+            environment = _environment == "dev" ? SINAPSEnvironment.development : SINAPSEnvironment.production;
+        }
+        
+        push = Sinch.managedPush(with: environment)
+        
         if let _isMessagingEnabled = props["isMessagingEnabled"] as? Bool{
             isMessagingEnabled = _isMessagingEnabled;
         }
@@ -58,6 +55,13 @@ class SinchCallManager:NSObject{
             appKey = _appKey;
             appSecret = _appSecret;
             host = _host;
+        }
+        if let _notificationsHandler = props["notificationsHandler"] as? NotificationsHandlerable{
+            notificationsHandler = _notificationsHandler;
+        }
+        
+        if let _messagesHandler = props["messagesHandler"] as? MessagesHandlerable{
+            messagesHandler = _messagesHandler;
         }
         super.init()
         
@@ -116,11 +120,20 @@ extension SinchCallManager:SINCallClientDelegate{
         if(!self.canReceiveIncomingCall()) {return nil;}
         self.sinchCall = call;
         self.sinchCall?.delegate = self
-
+        
+        guard let not:UILocalNotification = self.notificationsHandler?.notificationForIncomingCall(withDisplayName: self.callerDisplayName) else{
+            let notification:SINLocalNotification = SINLocalNotification();
+            
+            notification.alertAction = NSLocalizedString("SIN_INCOMING_CALL", tableName: nil, bundle: Bundle.main, value: "", comment: "")
+            notification.alertBody = NSLocalizedString("SIN_INCOMING_CALL_DISPLAY_NAME", tableName: nil, bundle: Bundle.main, value: "", comment: "");
+            return notification;
+        }
+        
+        
         let notification:SINLocalNotification = SINLocalNotification();
-//        notification.alertAction = "SIN_INCOMING_CALL".localized
-//        notification.alertBody = NSString.localizedStringWithFormat("SIN_INCOMING_CALL_DISPLAY_NAME".localized as NSString, self.callerDisplayName) as String!;
-        notification.soundName = "incoming.wav"
+        notification.alertAction = not.alertAction;
+        notification.alertBody = not.alertBody;
+        notification.soundName = not.soundName;
         return notification;
     }
 
@@ -149,31 +162,9 @@ extension SinchCallManager:SINManagedPushDelegate{
         if(result.isCall()){
             guard let _ = result.call() else{return;}
         }else if(result.isMessage()){
-            
-            self.showIncominMessageNotificationWithPayload(payload! as NSDictionary, senderId: result.messageResult().senderId)
-            
-            //only if the app is in background we want to increment the badges count withoug actully going to DB to check
-//            if(UIApplication.shared.applicationState != .active){
-//                BadgesMananger.instance.incrementMessagesCount()
-//            }
+        
+            self.notificationsHandler?.handleMessageNotification(withPayload: payload, messageId: result.messageResult().messageId , senderId: result.messageResult().senderId)
         }
-        
-        
-    }
-    func showIncominMessageNotificationWithPayload(_ payload:NSDictionary, senderId:String){
-        guard let _ = payload.value(forKey: "sin") else {return}
-        guard let _aps = payload.value(forKey: "aps") as? NSDictionary else {return}
-        guard let _alert = _aps.value(forKey: "alert") as? NSDictionary else {return}
-        guard let args = _alert.value(forKey: "loc-args") as? NSArray else {return}
-        guard let key = args.firstObject as? String else {return}
-
-//        let not = UILocalNotification();
-//        not.fireDate = Date();
-//        not.alertTitle = "SIN_INCOMING_IM".localized;
-//        not.alertBody = NSString.localizedStringWithFormat("SIN_INCOMING_IM_DISPLAY_NAME".localized as NSString, key) as String
-//        not.timeZone = NSTimeZone.default
-//        not.userInfo = ["deep-link":BCEnvironment.internalDeeplink(withPath: "\(Routes.chat.rawValue)/\(senderId)")]
-//        UIApplication.shared.scheduleLocalNotification(not)
     }
 }
 extension SinchCallManager:CallManageable{
@@ -224,6 +215,11 @@ extension SinchCallManager:CallManageable{
         
         let result = params.copy() as! MessageParams
         result.messageId = message?.messageId;
+        
+        if let _message = message{
+            self.messagesHandler?.onSendingMessage(withMessageId: _message.messageId, headers: _message.headers, recipients: _message.recipientIds, text: _message.text, date: Date())
+        }
+        
         return result;
     }
     func terminate(){
@@ -307,6 +303,7 @@ extension SinchCallManager:SINCallDelegate{
 extension SinchCallManager:SINMessageClientDelegate{
 
     func messageClient(_ messageClient:SINMessageClient!, didReceiveIncomingMessage message: SINMessage!) {
+        self.messagesHandler?.onIncomingMessage(withMessageId: message.messageId, headers: message.headers, senderId: message.senderId, recipients: message.recipientIds, text: message.text, date: message.timestamp);
         self.messagesDelegate?.didReceiveMessage(messageId: message.messageId, headers: message.headers, senderId: message.senderId, recipients: message.recipientIds, text: message.text, date: message.timestamp);
     }
     func messageSent(_ message: SINMessage!, recipientId: String!) {

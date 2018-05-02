@@ -7,8 +7,11 @@
 //#import "RCTEventEmitter.h"
 #endif
 
+#import "NotificationsHandlerable.h"
+#import "MessagesHandlerable.h"
 
 @interface RNSinchRtc : RCTEventEmitter <RCTBridgeModule>
+
 #pragma mark - Setup
 + (void) initialize:(NSDictionary *)properties;
 

@@ -4,3 +4,5 @@
 
 #import <Sinch/Sinch.h>
 #import "SINCallKitProvider.h"
+#import "NotificationsHandlerable.h"
+#import "MessagesHandlerable.h"
