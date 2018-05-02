@@ -30,6 +30,7 @@ And apply plugin
 
 1. Add Sinch dependency to your Podfile inside ios folder`pod 'SinchRTC'`
 2. Inside ios folder run `pod install`
+3. Add Header Search Path `$(SRCROOT)/../node_modules/react-native-sinch-rtc/ios/Classes`
 
 
 ## Link Automatic

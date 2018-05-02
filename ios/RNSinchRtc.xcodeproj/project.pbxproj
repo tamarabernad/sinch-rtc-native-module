@@ -36,8 +36,8 @@
 		134814201AA4EA6300B7C361 /* libRNSinchRtc.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRNSinchRtc.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		6302C9082088E3530045F91C /* RNEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RNEvent.swift; sourceTree = "<group>"; };
 		6354DF14208A21C400F5FE95 /* MessagesDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesDelegate.swift; sourceTree = "<group>"; };
-		638DDB092099B8AE00402F9A /* NotificationsHandlerable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NotificationsHandlerable.h; sourceTree = "<group>"; };
-		638DDB0A2099BA5500402F9A /* MessagesHandlerable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MessagesHandlerable.h; sourceTree = "<group>"; };
+		638DDB092099B8AE00402F9A /* NotificationsHandlerable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = NotificationsHandlerable.h; path = Classes/NotificationsHandlerable.h; sourceTree = SOURCE_ROOT; };
+		638DDB0A2099BA5500402F9A /* MessagesHandlerable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MessagesHandlerable.h; path = Classes/MessagesHandlerable.h; sourceTree = SOURCE_ROOT; };
 		639119042087ACA60070F17E /* RNSinchRtc-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RNSinchRtc-Bridging-Header.h"; sourceTree = "<group>"; };
 		639119082087AD440070F17E /* AudioControllerDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioControllerDelegate.h; sourceTree = "<group>"; };
 		639119092087AD440070F17E /* AudioControllerDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AudioControllerDelegate.m; sourceTree = "<group>"; };
