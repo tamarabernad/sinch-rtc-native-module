@@ -10,5 +10,5 @@
 
 @protocol MessagesHandlerable <NSObject>
 -(void) onIncomingMessageWithMessageId:(NSString *)messageId headers:(NSDictionary *)headers senderId:(NSString *)senderId recipients:(NSArray *)recipients text:(NSString *)text date:(NSDate *)date;
--(void) onSendingMessageWithMessageId:(NSString *)messageId headers:(NSDictionary *)headers recipients:(NSArray *)recipients text:(NSString *)text date:(NSDate *)date;
+-(void) onSendingMessageWithMessageId:(NSString *)messageId headers:(NSDictionary *)headers senderId:(NSString *)senderId recipients:(NSArray *)recipients text:(NSString *)text date:(NSDate *)date;
 @end

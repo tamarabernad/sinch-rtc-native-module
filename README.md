@@ -93,6 +93,8 @@ Add Keys, Secret and Environment to the Module initialization
                            @"appKey":@"",
                            @"appSecret":@"",
                            @"host":@"",
+                           @"environment":@"dev" // For development, empty or other value for production
+                           @""
                            }];
 }
 ```

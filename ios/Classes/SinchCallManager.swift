@@ -217,7 +217,11 @@ extension SinchCallManager:CallManageable{
         result.messageId = message?.messageId;
         
         if let _message = message{
-            self.messagesHandler?.onSendingMessage(withMessageId: _message.messageId, headers: _message.headers, recipients: _message.recipientIds, text: _message.text, date: Date())
+            var userId = ""
+            if let _userId = UserDefaults.standard.object(forKey: "userId") as? String{
+                userId = _userId;
+            }
+            self.messagesHandler?.onSendingMessage(withMessageId: _message.messageId, headers: _message.headers, senderId: userId, recipients: _message.recipientIds, text: _message.text, date: Date())
         }
         
         return result;
