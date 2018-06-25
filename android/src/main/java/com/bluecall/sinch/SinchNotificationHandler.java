@@ -18,7 +18,7 @@ import java.util.Map;
 
 public class SinchNotificationHandler {
 
-    public static void onMessageReceived(final RemoteMessage remoteMessage, final Context applicationContext){
+    public static boolean relayMessageReceived(final RemoteMessage remoteMessage, final Context applicationContext){
         Map data = remoteMessage.getData();
         if (SinchHelpers.isSinchPushPayload(data)) {
             new ServiceConnection() {
@@ -43,6 +43,8 @@ public class SinchNotificationHandler {
                     applicationContext.bindService(new Intent(applicationContext, SinchService.class), this, Context.BIND_AUTO_CREATE);
                 }
             }.relayMessageData(data);
+            return true;
         }
+        return false;
     }
 }
