@@ -248,12 +248,14 @@ public class SinchService extends Service {
         }
         public void terminateGracefully(){
             if (mSinchClient != null) {
+                mSinchClient.unregisterManagedPush();
                 mSinchClient.stopListeningOnActiveConnection();
                 mSinchClient.terminateGracefully();
             }
         }
         public void terminate(){
             if (mSinchClient != null) {
+                mSinchClient.unregisterManagedPush();
                 mSinchClient.stopListeningOnActiveConnection();
                 mSinchClient.terminate();
             }

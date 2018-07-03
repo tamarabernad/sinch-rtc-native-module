@@ -82,7 +82,7 @@ public class PhoneActivityManager implements ServiceConnection {
         getSinchServiceInterface().terminate();
     }
     public void terminateGracefully() {
-        getSinchServiceInterface().terminate();
+        getSinchServiceInterface().terminateGracefully();
     }
 
     public void sendMessage(String recipientUserId, String textBody, ReadableMap headers, Callback callback) {
