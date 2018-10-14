@@ -1,8 +1,6 @@
 
 # react-native-sinch-rtc
 
-## STILL UNDER DEVELOPMENT, DON'T USE!
-
 ## Getting started
 
 `$ npm install react-native-sinch-rtc --save`
