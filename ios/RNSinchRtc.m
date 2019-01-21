@@ -173,6 +173,9 @@ RCT_EXPORT_METHOD(sendMessage:(NSString *)receiverUserId
                                                                }];
 }
 
-
++ (BOOL)requiresMainQueueSetup
+{
+    return NO;
+}
 
 @end
