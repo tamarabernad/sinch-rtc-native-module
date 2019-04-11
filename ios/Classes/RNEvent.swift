@@ -9,13 +9,13 @@
 import Foundation
 
 class RNEvent:NSObject{
-    public static let CallDidChangeStatus = "callDidChangeStatus"
-    public static let CallEndedWithReason = "callEndedWithReason"
-    public static let CallDidEstablish = "callDidEstablish"
-    public static let CallDidProgress = "callDidProgress"
+    @objc public static let CallDidChangeStatus = "callDidChangeStatus"
+    @objc public static let CallEndedWithReason = "callEndedWithReason"
+    @objc public static let CallDidEstablish = "callDidEstablish"
+    @objc public static let CallDidProgress = "callDidProgress"
     
-    public static let MessageReceived = "didReceiveMessage"
-    public static let MessageSent = "didSendMessage"
-    public static let MessageDelivered = "didDeliverMessage"
-    public static let MessageFailed = "didFailMessage"
+    @objc public static let MessageReceived = "didReceiveMessage"
+    @objc public static let MessageSent = "didSendMessage"
+    @objc public static let MessageDelivered = "didDeliverMessage"
+    @objc public static let MessageFailed = "didFailMessage"
 }

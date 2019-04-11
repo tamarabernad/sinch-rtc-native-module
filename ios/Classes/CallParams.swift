@@ -8,8 +8,8 @@
 
 import Foundation
 class CallParams:NSObject{
-    var calleeId: String = "";
-    var level:String = "";
-    var paymentSourceId:String?;
-    var isFirstFreeCall:Bool = false;
+    @objc var calleeId: String = "";
+    @objc var level:String = "";
+    @objc var paymentSourceId:String?;
+    @objc var isFirstFreeCall:Bool = false;
 }

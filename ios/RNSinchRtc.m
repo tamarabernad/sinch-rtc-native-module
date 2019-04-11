@@ -9,6 +9,8 @@
 
 - (instancetype)init{
     if(self = [super init]){
+       
+        
         PhoneActivityManager.instance.callManager.callDelegate = self;
         PhoneActivityManager.instance.callManager.messagesDelegate = self;
     }
@@ -173,6 +175,9 @@ RCT_EXPORT_METHOD(sendMessage:(NSString *)receiverUserId
                                                                }];
 }
 
-
++ (BOOL)requiresMainQueueSetup
+{
+    return NO;
+}
 
 @end

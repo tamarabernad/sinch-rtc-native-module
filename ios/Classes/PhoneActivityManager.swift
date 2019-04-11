@@ -10,12 +10,12 @@ import Foundation
 import UIKit
 
 class PhoneActivityManager:NSObject{
-    static let instance = PhoneActivityManager()
-    var callManager:CallManageable?;
+    @objc static let instance = PhoneActivityManager()
+    @objc var callManager:CallManageable?;
   
     private override init() {}
     
-    func initialize(props: [String : Any]){
+    @objc func initialize(props: [String : Any]){
         self.callManager = SinchCallManager(props: props)
     }
   
@@ -28,46 +28,46 @@ class PhoneActivityManager:NSObject{
             callManager?.inCall = _inCall
         }
     }
-    func login(_ userId:String){
+    @objc func login(_ userId:String){
         self.callManager?.login(userId)
     }
-    func logout(){
+    @objc func logout(){
         self.callManager?.logout()
     }
-    func setDisplayName(_ name:String){
+    @objc func setDisplayName(_ name:String){
         self.callManager?.setDisplayName(name)
     }
-    func answer(){
+    @objc func answer(){
         self.callManager?.answer()
     }
-    func hangup(){
+    @objc func hangup(){
         self.callManager?.hangup()
     }
-    func sendMessage(params:MessageParams)->MessageParams?{
+    @objc func sendMessage(params:MessageParams)->MessageParams?{
         return self.callManager?.sendMessage(params: params)
     }
-    func terminate(){
+    @objc func terminate(){
         self.callManager?.terminate()
     }
-    func terminateGracefully(){
+    @objc func terminateGracefully(){
         self.callManager?.terminateGracefully()
     }
   
-    func application(_ application: UIApplication,
+    @objc func application(_ application: UIApplication,
                      didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data){
         self.callManager?.application(application, didRegisterForRemoteNotificationsWithDeviceToken: deviceToken)
     }
-    func application(_ application: UIApplication,
+    @objc func application(_ application: UIApplication,
                      didReceiveRemoteNotification userInfo: [AnyHashable : Any]){
         self.callManager?.application(application, didReceiveRemoteNotification: userInfo)
     }
-    func application(_ application: UIApplication,
+    @objc func application(_ application: UIApplication,
                      didReceiveRemoteNotification userInfo: [AnyHashable : Any],
                      fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void){
         self.callManager?.application(application, didReceiveRemoteNotification: userInfo, fetchCompletionHandler: completionHandler)
     }
     
-    func call(with callParams:CallParams)->String?{
+    @objc func call(with callParams:CallParams)->String?{
         return self.callManager?.call(with: callParams)
     }
    
