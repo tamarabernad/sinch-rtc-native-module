@@ -8,11 +8,11 @@
 
 import Foundation
 class MessageParams:NSObject{
-    var text: String?
-    var headers:[String: String]?;
-    var senderId:String?
-    var receiverIds:[String]?
-    var messageId:String?
+    @objc var text: String?
+    @objc var headers:[String: String]?;
+    @objc var senderId:String?
+    @objc var receiverIds:[String]?
+    @objc var messageId:String?
     
     override func copy() -> Any {
         let _copy = MessageParams();

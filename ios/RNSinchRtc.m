@@ -9,6 +9,8 @@
 
 - (instancetype)init{
     if(self = [super init]){
+       
+        
         PhoneActivityManager.instance.callManager.callDelegate = self;
         PhoneActivityManager.instance.callManager.messagesDelegate = self;
     }
