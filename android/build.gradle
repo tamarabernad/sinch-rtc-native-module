@@ -34,8 +34,8 @@ repositories {
 }
 
 dependencies {
-    compile(name:'sinch-android-rtc', version:'+', ext:'aar')
-    compile 'com.facebook.react:react-native:+'
-    compile 'com.google.firebase:firebase-messaging:11.0.1'
+    implementation(name:'sinch-android-rtc', version:'+', ext:'aar')
+    implementation 'com.facebook.react:react-native:+'
+    implementation 'com.google.firebase:firebase-messaging:11.0.1'
 }
   
