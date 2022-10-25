@@ -1,3 +1,4 @@
+[DEPRECATED!]
 
 # react-native-sinch-rtc
 
